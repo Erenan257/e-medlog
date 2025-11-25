@@ -10,7 +10,6 @@ function ChecklistPage({ usuario }) {
   
   const [ambulancias, setAmbulancias] = useState([]);
   const [selectedAmbulancia, setSelectedAmbulancia] = useState('');
-  
   const [turno, setTurno] = useState('Dia');
 
   const navigate = useNavigate();
@@ -22,16 +21,15 @@ function ChecklistPage({ usuario }) {
         const res = await fetch(`${import.meta.env.VITE_API_URL}/api/ambulancias`);
         if (res.ok) {
             const data = await res.json();
-            // Filtra apenas as ambulâncias APTAS para fazer checklist
-            const aptas = data.filter(a => a.Status_Operacional === 'Apto');
-            setAmbulancias(aptas);
+            // Carrega TODAS as ambulâncias (Aptas e Inaptas) para permitir o "resgate"
+            setAmbulancias(data);
             
-            // Se tiver alguma, seleciona a primeira automaticamente
-            if (aptas.length > 0) {
-                setSelectedAmbulancia(aptas[0].ID_Ambulancia);
-            } else {
-                setLoading(false); // Se não tiver nenhuma apta, para o loading
-                setError("Nenhuma ambulância apta disponível.");
+            // Tenta selecionar uma Inapta primeiro (prioridade para o socorrista arrumar), senão pega a primeira
+            const inapta = data.find(a => a.Status_Operacional === 'Inapto');
+            if (inapta) {
+                setSelectedAmbulancia(inapta.ID_Ambulancia);
+            } else if (data.length > 0) {
+                setSelectedAmbulancia(data[0].ID_Ambulancia);
             }
         }
       } catch (error) {
@@ -49,7 +47,6 @@ function ChecklistPage({ usuario }) {
     const fetchKit = async () => {
       setLoading(true);
       try {
-        // --- AQUI É A MUDANÇA: Busca itens DA VIATURA, não os gerais ---
         const res = await fetch(`${import.meta.env.VITE_API_URL}/api/ambulancias/${selectedAmbulancia}/itens`);
         const data = await res.json();
         
@@ -58,7 +55,7 @@ function ChecklistPage({ usuario }) {
         // Pré-preenche com a quantidade mínima (Padrão)
         const quantidadesIniciais = {};
         data.forEach(item => {
-          quantidadesIniciais[item.ID_Insumo] = item.Quantidade_Minima; // A API já retorna o padrão configurado como 'Quantidade_Minima'
+          quantidadesIniciais[item.ID_Insumo] = item.Quantidade_Minima; 
         });
         setItemQuantities(quantidadesIniciais);
 
@@ -71,7 +68,7 @@ function ChecklistPage({ usuario }) {
     };
 
     fetchKit();
-  }, [selectedAmbulancia]); // Roda sempre que mudar a seleção
+  }, [selectedAmbulancia]); 
 
   const handleQuantityChange = (insumoId, quantidade) => {
     const novaQuantidade = Math.max(0, parseInt(quantidade, 10) || 0);
@@ -143,6 +140,7 @@ function ChecklistPage({ usuario }) {
       <form className="checklist-form" onSubmit={handleSubmit}>
         <h1>Realizar Checklist</h1>
 
+        {/* SELETOR DE AMBULÂNCIA (SEM EMOJIS) */}
         <div className="input-group" style={{marginBottom: '15px'}}>
             <label>Viatura:</label>
             <select 
@@ -150,15 +148,25 @@ function ChecklistPage({ usuario }) {
                 onChange={(e) => setSelectedAmbulancia(e.target.value)}
                 style={{padding: '10px', width: '100%', fontSize: '1rem'}}
             >
+                <option value="">Selecione a Ambulância...</option>
                 {ambulancias.map(amb => (
-                    <option key={amb.ID_Ambulancia} value={amb.ID_Ambulancia}>
-                        {amb.Placa} - {amb.Tipo_Ambulancia}
+                    <option 
+                        key={amb.ID_Ambulancia} 
+                        value={amb.ID_Ambulancia} 
+                        style={{
+                            color: amb.Status_Operacional === 'Inapto' ? 'red' : 'black',
+                            fontWeight: amb.Status_Operacional === 'Inapto' ? 'bold' : 'normal'
+                        }}
+                    >
+                        {amb.Placa} - {amb.Tipo_Ambulancia} 
+                        {/* Mantivemos apenas o texto indicativo */}
+                        {amb.Status_Operacional === 'Inapto' ? ' (BAIXADA - NECESSITA ATENÇÃO)' : ''}
                     </option>
                 ))}
-                {ambulancias.length === 0 && <option>Nenhuma viatura apta</option>}
             </select>
         </div>
 
+        {/* SELETOR DE TURNO */}
         <div className="input-group" style={{marginBottom: '20px'}}>
             <label>Turno:</label>
             <select 
@@ -166,8 +174,8 @@ function ChecklistPage({ usuario }) {
                 onChange={(e) => setTurno(e.target.value)}
                 style={{padding: '10px', width: '100%', fontSize: '1rem'}}
             >
-                <option value="Dia"> Plantão Diurno</option>
-                <option value="Noite"> Plantão Noturno</option>
+                <option value="Dia">Plantão Diurno</option>
+                <option value="Noite">Plantão Noturno</option>
             </select>
         </div>
 
@@ -187,6 +195,7 @@ function ChecklistPage({ usuario }) {
                         <span style={{fontSize: '0.8rem', color: '#666', marginLeft: '5px'}}>
                             (Min: {insumo.Quantidade_Minima})
                         </span>
+                        {/* Correção do "0" fantasma: */}
                         {!!insumo.Critico && <span style={{color:'red', marginLeft:'5px', fontSize:'0.7rem'}}>*Crítico</span>}
                     </span>
                     <div className="item-actions">
@@ -197,7 +206,6 @@ function ChecklistPage({ usuario }) {
                         value={itemQuantities[insumo.ID_Insumo]}
                         onChange={(e) => handleQuantityChange(insumo.ID_Insumo, e.target.value)}
                         style={{
-                            // Destaca visualmente se estiver abaixo do mínimo
                             borderColor: (itemQuantities[insumo.ID_Insumo] < insumo.Quantidade_Minima) ? 'red' : '#ccc',
                             backgroundColor: (itemQuantities[insumo.ID_Insumo] < insumo.Quantidade_Minima) ? '#fff5f5' : '#fff'
                         }}
