@@ -16,6 +16,7 @@ import ProtectedRoute from './components/ProtectedRoute';
 import AdminMenu from './components/AdminMenu';
 import ChangePasswordPage from './components/ChangePasswordPage';
 import BaixarAmbulanciaPage from './components/BaixarAmbulanciaPage';
+import ConfigurarKitPage from './components/ConfigurarKitPage'; 
 import './App.css';
 
 function AppRoutes() {
@@ -233,6 +234,16 @@ function AppRoutes() {
           <ProtectedRoute usuario={usuarioLogado} allowedRoles={['Socorrista', 'Gestor']}>
             <Layout titulo="Reportar Problema">
               <BaixarAmbulanciaPage />
+            </Layout>
+          </ProtectedRoute>
+        } 
+      />
+      <Route 
+        path="/admin/ambulancias/:id_ambulancia/configurar" 
+        element={
+          <ProtectedRoute usuario={usuarioLogado} allowedRoles={['Gestor']}>
+            <Layout titulo="Configurar Viatura">
+              <ConfigurarKitPage />
             </Layout>
           </ProtectedRoute>
         } 

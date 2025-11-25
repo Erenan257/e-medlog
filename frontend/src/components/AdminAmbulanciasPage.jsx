@@ -1,8 +1,11 @@
 import React, { useState, useEffect } from 'react';
-// import { Link } from 'react-router-dom'; // Não precisa mais do Link aqui
-import './PedidosPage.css'; // Reutilizando o CSS existente
+import { useNavigate } from 'react-router-dom'; // <--- 1. IMPORT NECESSÁRIO
+import './PedidosPage.css';
 
 function AdminAmbulanciasPage() {
+  // --- 2. INICIALIZAR O HOOK ---
+  const navigate = useNavigate(); 
+  
   const [ambulancias, setAmbulancias] = useState([]);
   const [loading, setLoading] = useState(true);
   const [novaPlaca, setNovaPlaca] = useState('');
@@ -47,7 +50,7 @@ function AdminAmbulanciasPage() {
     }
   };
 
-  // --- FUNÇÃO: Tornar Apta ---
+  // Função: Tornar Apta
   const handleTornarApta = async (id) => {
     try {
         const response = await fetch(`${import.meta.env.VITE_API_URL}/api/ambulancias/${id}`, {
@@ -55,13 +58,13 @@ function AdminAmbulanciasPage() {
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ 
                 status: 'Apto', 
-                motivo: null // Limpa o motivo da baixa
+                motivo: null 
             })
         });
 
         if (response.ok) {
             alert('Viatura marcada como APTA e liberada!');
-            fetchAmbulancias(); // Atualiza a lista na hora
+            fetchAmbulancias(); 
         } else {
             alert('Erro ao atualizar status.');
         }
@@ -95,7 +98,6 @@ function AdminAmbulanciasPage() {
       
       <h1>Gestão de Ambulâncias</h1>
 
-      {/* Formulário Simples de Cadastro */}
       <form onSubmit={handleCriar} style={{marginBottom: '30px', padding: '20px', background: '#f8f9fa', borderRadius: '8px'}}>
         <h3>Nova Viatura</h3>
         <div style={{display: 'flex', gap: '10px', flexWrap: 'wrap'}}>
@@ -116,7 +118,6 @@ function AdminAmbulanciasPage() {
         </div>
       </form>
 
-      {/* Lista */}
       <div className="pedidos-list">
         <div className="pedido-header" style={{gridTemplateColumns: '0.5fr 1fr 1fr 1.5fr 1fr'}}>
           <span>ID</span>
@@ -132,7 +133,6 @@ function AdminAmbulanciasPage() {
             <span style={{fontWeight: 'bold'}}>{amb.Placa}</span>
             <span>{amb.Tipo_Ambulancia}</span>
             
-            {/* COLUNA DE STATUS COM MOTIVO */}
             <div style={{display: 'flex', flexDirection: 'column'}}>
                 <span style={{
                     color: amb.Status_Operacional === 'Apto' ? 'green' : 'red',
@@ -147,8 +147,18 @@ function AdminAmbulanciasPage() {
                 )}
             </div>
 
-            {/* COLUNA DE AÇÕES (O BOTÃO ESTÁ AQUI!) */}
             <div style={{display: 'flex', gap: '5px'}}>
+                {/* Botão KIT (Agora vai funcionar!) */}
+                <button 
+                      onClick={() => navigate(`/admin/ambulancias/${amb.ID_Ambulancia}/configurar`)} 
+                      className="action-button" 
+                      style={{backgroundColor: '#22199eff', color: 'white', border: 'none', fontSize: '0.8rem', padding: '5px 10px'}}
+                      title="Configurar Inventário"
+                  >
+                       Insumos
+                  </button>
+
+                {/* Botão ATIVAR */}
                 {amb.Status_Operacional === 'Inapto' && (
                     <button 
                         onClick={() => handleTornarApta(amb.ID_Ambulancia)} 
@@ -156,7 +166,7 @@ function AdminAmbulanciasPage() {
                         style={{backgroundColor: '#28a745', color: 'white', border: 'none', fontSize: '0.8rem', padding: '5px 10px'}}
                         title="Tornar Apta"
                     >
-                        ✅ Ativar
+                         Ativar
                     </button>
                 )}
                 

@@ -97,3 +97,59 @@ def handle_ambulancia_id(id_ambulancia):
         finally:
             cursor.close()
             conn.close()
+            
+@bp.route('/ambulancias/<int:id_ambulancia>/itens', methods=['POST'])
+def salvar_inventario_padrao(id_ambulancia):
+    dados = request.get_json() # Espera uma lista: [{id_insumo: 1, qtd: 10}, ...]
+    
+    if not dados or not isinstance(dados, list):
+        return jsonify({"status": "erro", "message": "Formato inválido. Envie uma lista."}), 400
+
+    conn = get_db_connection()
+    cursor = conn.cursor()
+
+    try:
+        # Estratégia: Limpar o kit anterior dessa viatura e salvar o novo
+        # Isso evita conflitos e facilita a edição
+        cursor.execute("DELETE FROM Inventario_Padrao WHERE ID_Ambulancia = %s", (id_ambulancia,))
+        
+        sql_insert = "INSERT INTO Inventario_Padrao (ID_Ambulancia, ID_Insumo, Quantidade_Padrao) VALUES (%s, %s, %s)"
+        
+        for item in dados:
+            # Só insere se quantidade > 0
+            if int(item['qtd']) > 0:
+                cursor.execute(sql_insert, (id_ambulancia, item['id_insumo'], item['qtd']))
+        
+        conn.commit()
+        return jsonify({"status": "sucesso", "message": "Kit da ambulância atualizado com sucesso!"})
+
+    except Exception as e:
+        conn.rollback()
+        return jsonify({"status": "erro", "message": str(e)}), 500
+    finally:
+        cursor.close()
+        conn.close()
+
+# 2. Ler a configuração (Para o Checklist saber o que cobrar)
+@bp.route('/ambulancias/<int:id_ambulancia>/itens', methods=['GET'])
+def get_inventario_padrao(id_ambulancia):
+    conn = get_db_connection()
+    cursor = conn.cursor(dictionary=True)
+    try:
+        # Traz os dados do Inventario_Padrao juntando com o nome do Insumo
+        sql = """
+            SELECT i.ID_Insumo, i.Nome_Insumo, i.Unidade_Medida, i.Critico,
+                   pad.Quantidade_Padrao as Quantidade_Minima
+            FROM Inventario_Padrao pad
+            JOIN Insumo i ON pad.ID_Insumo = i.ID_Insumo
+            WHERE pad.ID_Ambulancia = %s AND i.is_active = TRUE
+            ORDER BY i.Nome_Insumo ASC
+        """
+        cursor.execute(sql, (id_ambulancia,))
+        itens = cursor.fetchall()
+        return jsonify(itens)
+    except Exception as e:
+        return jsonify({"status": "erro", "message": str(e)}), 500
+    finally:
+        cursor.close()
+        conn.close()

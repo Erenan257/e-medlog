@@ -66,9 +66,16 @@ def handle_checklists():
                 quantidade_reportada = item['quantidade']
                 
                 # Busca a quantidade mínima para este insumo
-                cursor.execute("SELECT Quantidade_Minima FROM Insumo WHERE ID_Insumo = %s", (item['id_insumo'],))
-                insumo_info = cursor.fetchone()
-                quantidade_minima = insumo_info['Quantidade_Minima'] if insumo_info else 0
+                sql_meta = """
+                    SELECT Quantidade_Padrao 
+                    FROM Inventario_Padrao 
+                    WHERE ID_Ambulancia = %s AND ID_Insumo = %s
+                """
+                cursor.execute(sql_meta, (dados['id_ambulancia'], item['id_insumo']))
+                config_item = cursor.fetchone()
+                
+                # Se tiver configurado no kit, usa o padrão do kit. Se não, assume 0.
+                quantidade_minima = config_item['Quantidade_Padrao'] if config_item else 0
                 
                 # Define o status com base na comparação
                 status = 'Presente' if quantidade_reportada >= quantidade_minima else 'Ausente'

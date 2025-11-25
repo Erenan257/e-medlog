@@ -11,40 +11,67 @@ function ChecklistPage({ usuario }) {
   const [ambulancias, setAmbulancias] = useState([]);
   const [selectedAmbulancia, setSelectedAmbulancia] = useState('');
   
-  // 1. NOVO ESTADO DO TURNO
   const [turno, setTurno] = useState('Dia');
 
   const navigate = useNavigate();
 
+  // 1. Carregar Ambulâncias (Ao abrir a tela)
   useEffect(() => {
-    const fetchData = async () => {
+    const fetchAmbulancias = async () => {
       try {
-        const resInsumos = await fetch(`${import.meta.env.VITE_API_URL}/api/insumos`);
-        const dataInsumos = await resInsumos.json();
-        setInsumos(dataInsumos);
-
-        const quantidadesIniciais = {};
-        dataInsumos.forEach(item => {
-          quantidadesIniciais[item.ID_Insumo] = item.Quantidade_Minima;
-        });
-        setItemQuantities(quantidadesIniciais); 
-
-        const resAmbulancias = await fetch(`${import.meta.env.VITE_API_URL}/api/ambulancias`);
-        if (resAmbulancias.ok) {
-            const dataAmb = await resAmbulancias.json();
-            setAmbulancias(dataAmb);
-            if (dataAmb.length > 0) setSelectedAmbulancia(dataAmb[0].ID_Ambulancia);
+        const res = await fetch(`${import.meta.env.VITE_API_URL}/api/ambulancias`);
+        if (res.ok) {
+            const data = await res.json();
+            // Filtra apenas as ambulâncias APTAS para fazer checklist
+            const aptas = data.filter(a => a.Status_Operacional === 'Apto');
+            setAmbulancias(aptas);
+            
+            // Se tiver alguma, seleciona a primeira automaticamente
+            if (aptas.length > 0) {
+                setSelectedAmbulancia(aptas[0].ID_Ambulancia);
+            } else {
+                setLoading(false); // Se não tiver nenhuma apta, para o loading
+                setError("Nenhuma ambulância apta disponível.");
+            }
         }
+      } catch (error) {
+        setError("Erro ao carregar viaturas.");
+        setLoading(false);
+      }
+    };
+    fetchAmbulancias();
+  }, []);
+
+  // 2. Carregar o KIT ESPECÍFICO quando a ambulância mudar
+  useEffect(() => {
+    if (!selectedAmbulancia) return;
+
+    const fetchKit = async () => {
+      setLoading(true);
+      try {
+        // --- AQUI É A MUDANÇA: Busca itens DA VIATURA, não os gerais ---
+        const res = await fetch(`${import.meta.env.VITE_API_URL}/api/ambulancias/${selectedAmbulancia}/itens`);
+        const data = await res.json();
+        
+        setInsumos(data);
+
+        // Pré-preenche com a quantidade mínima (Padrão)
+        const quantidadesIniciais = {};
+        data.forEach(item => {
+          quantidadesIniciais[item.ID_Insumo] = item.Quantidade_Minima; // A API já retorna o padrão configurado como 'Quantidade_Minima'
+        });
+        setItemQuantities(quantidadesIniciais);
 
       } catch (error) {
-        setError(error.message);
+        console.error(error);
+        setError("Erro ao carregar kit da viatura.");
       } finally {
         setLoading(false);
       }
     };
 
-    fetchData();
-  }, []);
+    fetchKit();
+  }, [selectedAmbulancia]); // Roda sempre que mudar a seleção
 
   const handleQuantityChange = (insumoId, quantidade) => {
     const novaQuantidade = Math.max(0, parseInt(quantidade, 10) || 0);
@@ -62,10 +89,9 @@ function ChecklistPage({ usuario }) {
     let statusCalculado = 'Apto';
     let motivoCalculado = '';
 
-    // 1. Verifica itens críticos (Lógica Automática)
+    // Verifica itens críticos
     const itensCriticosFaltantes = insumos.filter(item => {
         const qtdAtual = itemQuantities[item.ID_Insumo] || 0;
-        // Se é critico (1) e está abaixo do mínimo
         return item.Critico && qtdAtual < item.Quantidade_Minima;
     });
 
@@ -81,13 +107,11 @@ function ChecklistPage({ usuario }) {
       quantidade: itemQuantities[insumo.ID_Insumo]
     }));
 
-    // OBJETO CORRIGIDO (Sem duplicatas embaixo)
     const checklistPayload = {
       id_ambulancia: selectedAmbulancia, 
       id_socorrista: usuario ? usuario.ID_Usuario : 1, 
       turno: turno,
       itens: itensArray,
-      // Enviamos o status calculado para o backend atualizar a viatura
       status_ambulancia: statusCalculado,
       motivo_ambulancia: motivoCalculado
     }; 
@@ -99,12 +123,11 @@ function ChecklistPage({ usuario }) {
         body: JSON.stringify(checklistPayload)
       });
       
-      const data = await response.json();
-      
       if (response.ok) {
         alert('Checklist enviado com sucesso!');
         navigate('/pedidos'); 
       } else {
+        const data = await response.json();
         alert(`Erro: ${data.message}`);
       }
     } catch (error) {
@@ -112,8 +135,8 @@ function ChecklistPage({ usuario }) {
     }
   };
 
-  if (loading) return <p>Carregando...</p>;
-  if (error) return <p>Erro: {error}</p>;
+  if (loading && !insumos.length && !error) return <p className="loading-text">Carregando checklist...</p>;
+  if (error) return <p className="error-text">{error}</p>;
 
   return (
     <div className="checklist-container">
@@ -127,16 +150,15 @@ function ChecklistPage({ usuario }) {
                 onChange={(e) => setSelectedAmbulancia(e.target.value)}
                 style={{padding: '10px', width: '100%', fontSize: '1rem'}}
             >
-                <option value="">Selecione a Ambulância...</option>
                 {ambulancias.map(amb => (
                     <option key={amb.ID_Ambulancia} value={amb.ID_Ambulancia}>
                         {amb.Placa} - {amb.Tipo_Ambulancia}
                     </option>
                 ))}
+                {ambulancias.length === 0 && <option>Nenhuma viatura apta</option>}
             </select>
         </div>
 
-        {/* 3. NOVO SELETOR VISUAL */}
         <div className="input-group" style={{marginBottom: '20px'}}>
             <label>Turno:</label>
             <select 
@@ -149,32 +171,44 @@ function ChecklistPage({ usuario }) {
             </select>
         </div>
 
-        <div className="checklist-header">
-          <span>Insumo (Mínimo)</span>
-          <span>Qtd. Atual</span>
-        </div>
+        {insumos.length === 0 ? (
+            <p style={{textAlign: 'center', color: '#666'}}>Nenhum item configurado para esta viatura. Contate o Gestor.</p>
+        ) : (
+            <>
+                <div className="checklist-header">
+                <span>Insumo (Padrão)</span>
+                <span>Qtd. Atual</span>
+                </div>
 
-        {insumos.map((insumo) => (
-          <div className="checklist-item" key={insumo.ID_Insumo}>
-            <span className="item-name">
-                {insumo.Nome_Insumo} 
-                <span style={{fontSize: '0.8rem', color: '#666', marginLeft: '5px'}}>
-                    (Mín: {insumo.Quantidade_Minima})
-                </span>
-            </span>
-            <div className="item-actions">
-              <input
-                type="number"
-                className="quantity-input"
-                min="0"
-                value={itemQuantities[insumo.ID_Insumo]}
-                onChange={(e) => handleQuantityChange(insumo.ID_Insumo, e.target.value)}
-              />
-            </div>
-          </div>
-        ))}
+                {insumos.map((insumo) => (
+                <div className="checklist-item" key={insumo.ID_Insumo}>
+                    <span className="item-name">
+                        {insumo.Nome_Insumo} 
+                        <span style={{fontSize: '0.8rem', color: '#666', marginLeft: '5px'}}>
+                            (Min: {insumo.Quantidade_Minima})
+                        </span>
+                        {!!insumo.Critico && <span style={{color:'red', marginLeft:'5px', fontSize:'0.7rem'}}>*Crítico</span>}
+                    </span>
+                    <div className="item-actions">
+                    <input
+                        type="number"
+                        className="quantity-input"
+                        min="0"
+                        value={itemQuantities[insumo.ID_Insumo]}
+                        onChange={(e) => handleQuantityChange(insumo.ID_Insumo, e.target.value)}
+                        style={{
+                            // Destaca visualmente se estiver abaixo do mínimo
+                            borderColor: (itemQuantities[insumo.ID_Insumo] < insumo.Quantidade_Minima) ? 'red' : '#ccc',
+                            backgroundColor: (itemQuantities[insumo.ID_Insumo] < insumo.Quantidade_Minima) ? '#fff5f5' : '#fff'
+                        }}
+                    />
+                    </div>
+                </div>
+                ))}
 
-        <button type="submit" className="submit-button">Finalizar e Enviar</button>
+                <button type="submit" className="submit-button">Finalizar e Enviar</button>
+            </>
+        )}
       </form>
     </div>
   );
