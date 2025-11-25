@@ -10,6 +10,13 @@ import UsuarioFormPage from './components/UsuarioFormPage';
 import AdminInsumosPage from './components/AdminInsumosPage';
 import InsumoFormPage from './components/InsumoFormPage';
 import InventarioPage from './components/InventarioPage';
+import AdminAmbulanciasPage from './components/AdminAmbulanciasPage';
+import Header from './components/Header';
+import ProtectedRoute from './components/ProtectedRoute';
+import AdminMenu from './components/AdminMenu';
+import ChangePasswordPage from './components/ChangePasswordPage';
+import BaixarAmbulanciaPage from './components/BaixarAmbulanciaPage';
+import ConfigurarKitPage from './components/ConfigurarKitPage'; 
 import './App.css';
 
 function AppRoutes() {
@@ -18,82 +25,230 @@ function AppRoutes() {
 
   const handleLoginSuccess = (dadosUsuario) => {
     setUsuarioLogado(dadosUsuario);
-
-    // Esta lógica continua correta para o momento do login
-    if (dadosUsuario.Perfil === 'Socorrista') { // 
-      navigate('/dashboard');
-    } else if (dadosUsuario.Perfil === 'Farmacia' || dadosUsuario.Perfil === 'Gestor') { // 
-      navigate('/admin/pedidos');
+    
+    // Lógica de Redirecionamento Ajustada
+    if (dadosUsuario.Perfil === 'Farmacia') {
+      navigate('/admin/pedidos'); // Farmácia vai direto para o trabalho dela
     } else {
-      navigate('/');
+      // Socorrista E Gestor vão para o Dashboard (cada um vê o seu)
+      navigate('/dashboard'); 
     }
+  };
+
+  const handleLogout = () => {
+    setUsuarioLogado(null);
+    navigate('/');
+  };
+
+  // O Layout que desenha o Header
+  const Layout = ({ children, titulo }) => {
+    // Verifica se deve mostrar o menu extra (só se não for socorrista)
+    const showAdminMenu = usuarioLogado && usuarioLogado.Perfil !== 'Socorrista';
+    
+    // Se tiver o menu extra, precisamos de mais espaço no topo
+    const paddingTop = showAdminMenu ? '140px' : '100px'; 
+
+    return (
+      <>
+        <Header titulo={titulo} onLogout={handleLogout} />
+        
+        {/* O Menu Inteligente entra aqui */}
+        <AdminMenu usuario={usuarioLogado} />
+
+        <div className="app-content" style={{ paddingTop: paddingTop }}>
+          {children}
+        </div>
+      </>
+    );
   };
 
   return (
     <Routes>
+      {/* ROTA DE LOGIN (Ajustada para persistência) */}
       <Route 
         path="/" 
         element={
-          // Se NÃO houver usuário logado, mostre a LoginPage
           !usuarioLogado ? (
             <LoginPage onLoginSuccess={handleLoginSuccess} />
           ) : (
-            // AQUI ESTÁ A CORREÇÃO:
-            // Se HOUVER um usuário logado, verifique o perfil dele para decidir para onde redirecionar
-            usuarioLogado.Perfil === 'Socorrista' ? <Navigate to="/dashboard" /> : <Navigate to="/admin/pedidos" />
+            // Lógica de Redirecionamento Automático (Se já estiver logado):
+            // Se for Farmácia -> Pedidos. Se for Gestor ou Socorrista -> Dashboard.
+            usuarioLogado.Perfil === 'Farmacia' ? <Navigate to="/admin/pedidos" /> : <Navigate to="/dashboard" />
           )
         } 
       />
       
-      {/* O resto das rotas continua igual */}
+      {/* ROTAS PROTEGIDAS (Com Header via Layout) */}
+      
       <Route 
         path="/dashboard" 
-        element={usuarioLogado ? <DashboardPage usuario={usuarioLogado} /> : <Navigate to="/" />} 
+        element={
+          <ProtectedRoute usuario={usuarioLogado} allowedRoles={['Socorrista', 'Gestor']}>
+            <Layout titulo="Dashboard">
+              <DashboardPage usuario={usuarioLogado} />
+            </Layout>
+          </ProtectedRoute>
+        } 
       />
+      
+      {/* ... Fazer o mesmo para /pedidos e /inventario se desejar ... */}
+
       <Route 
         path="/checklist" 
-        element={usuarioLogado ? <ChecklistPage /> : <Navigate to="/" />} 
+        element={
+          <ProtectedRoute usuario={usuarioLogado} allowedRoles={['Socorrista', 'Gestor']}>
+            <Layout titulo="Realizar Checklist">
+              <ChecklistPage usuario={usuarioLogado} />
+            </Layout>
+          </ProtectedRoute>
+        } 
       />
+
       <Route 
         path="/pedidos" 
-        element={usuarioLogado ? <PedidosPage /> : <Navigate to="/" />} 
+        element={usuarioLogado ? (
+          <Layout titulo="Meus Pedidos">
+            <PedidosPage />
+          </Layout>
+        ) : <Navigate to="/" />} 
       />
+
       <Route 
         path="/pedidos/:id_pedido" 
-        element={usuarioLogado ? <PedidoDetailPage /> : <Navigate to="/" />} 
+        element={usuarioLogado ? (
+          <Layout titulo="Detalhes do Pedido">
+            <PedidoDetailPage usuario={usuarioLogado} />
+          </Layout>
+        ) : <Navigate to="/" />} 
       />
+
       <Route 
         path="/admin/pedidos" 
-        element={usuarioLogado ? <PedidosPage /> : <Navigate to="/" />} 
+        element={
+          <ProtectedRoute usuario={usuarioLogado} allowedRoles={['Gestor', 'Farmacia']}>
+            <Layout titulo="Gestão de Pedidos">
+              <PedidosPage />
+            </Layout>
+          </ProtectedRoute>
+        } 
       />
+
       <Route 
         path="/admin/usuarios" 
-        element={usuarioLogado ? <AdminUsuariosPage /> : <Navigate to="/" />} 
+        element={
+          <ProtectedRoute usuario={usuarioLogado} allowedRoles={['Gestor']}>
+            <Layout titulo="Gestão de Usuários">
+              <AdminUsuariosPage />
+            </Layout>
+          </ProtectedRoute>
+        } 
       />
+
       <Route 
         path="/admin/usuarios/novo" 
-        element={usuarioLogado ? <UsuarioFormPage /> : <Navigate to="/" />} 
+        element={
+          <ProtectedRoute usuario={usuarioLogado} allowedRoles={['Gestor']}>
+            <Layout titulo="Novo Usuário">
+              <UsuarioFormPage />
+            </Layout>
+          </ProtectedRoute>
+        } 
       />
+
       <Route 
         path="/admin/usuarios/:id_usuario" 
-        element={usuarioLogado ? <UsuarioFormPage /> : <Navigate to="/" />} 
+        element={
+          <ProtectedRoute usuario={usuarioLogado} allowedRoles={['Gestor']}>
+            <Layout titulo="Editar Usuário">
+              <UsuarioFormPage />
+            </Layout>
+          </ProtectedRoute>
+        } 
       />
+
       <Route 
         path="/admin/insumos" 
-        element={usuarioLogado ? <AdminInsumosPage /> : <Navigate to="/" />} 
+        element={
+          <ProtectedRoute usuario={usuarioLogado} allowedRoles={['Gestor', 'Farmacia']}>
+            <Layout titulo="Gestão de Insumos">
+              <AdminInsumosPage />
+            </Layout>
+          </ProtectedRoute>
+        } 
       />
+
       <Route 
         path="/admin/insumos/novo" 
-        element={usuarioLogado ? <InsumoFormPage /> : <Navigate to="/" />} 
+        element={
+          <ProtectedRoute usuario={usuarioLogado} allowedRoles={['Gestor', 'Farmacia']}>
+            <Layout titulo="Novo Insumo">
+              <InsumoFormPage />
+            </Layout>
+          </ProtectedRoute>
+        } 
       />
+
       <Route 
         path="/admin/insumos/:id_insumo" 
-        element={usuarioLogado ? <InsumoFormPage /> : <Navigate to="/" />} 
+        element={
+          <ProtectedRoute usuario={usuarioLogado} allowedRoles={['Gestor', 'Farmacia']}>
+            <Layout titulo="Editar Insumo">
+              <InsumoFormPage />
+            </Layout>
+          </ProtectedRoute>
+        } 
       />
+
       <Route 
         path="/inventario" 
-        element={usuarioLogado ? <InventarioPage /> : <Navigate to="/" />} 
+        element={usuarioLogado ? (
+          <Layout titulo="Inventário Padrão">
+            <InventarioPage />
+          </Layout>
+        ) : <Navigate to="/" />} 
       />
+
+      <Route 
+        path="/admin/ambulancias" 
+        element={
+          <ProtectedRoute usuario={usuarioLogado} allowedRoles={['Gestor']}>
+            <Layout titulo="Gestão de Viaturas">
+              <AdminAmbulanciasPage />
+            </Layout>
+          </ProtectedRoute>
+        } 
+      />
+      <Route 
+        path="/alterar-senha" 
+        element={
+          usuarioLogado ? (
+            <Layout titulo="Segurança">
+              <ChangePasswordPage usuario={usuarioLogado} />
+            </Layout>
+          ) : <Navigate to="/" />
+        } 
+      />
+      <Route 
+        path="/baixar-viatura" 
+        element={
+          <ProtectedRoute usuario={usuarioLogado} allowedRoles={['Socorrista', 'Gestor']}>
+            <Layout titulo="Reportar Problema">
+              <BaixarAmbulanciaPage />
+            </Layout>
+          </ProtectedRoute>
+        } 
+      />
+      <Route 
+        path="/admin/ambulancias/:id_ambulancia/configurar" 
+        element={
+          <ProtectedRoute usuario={usuarioLogado} allowedRoles={['Gestor']}>
+            <Layout titulo="Configurar Viatura">
+              <ConfigurarKitPage />
+            </Layout>
+          </ProtectedRoute>
+        } 
+      />
+
     </Routes>
   );
 }

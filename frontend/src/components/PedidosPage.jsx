@@ -1,49 +1,92 @@
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom'; // Usaremos Link para navegação futura
-import './PedidosPage.css'; // Criaremos este arquivo para o estilo
+import { Link } from 'react-router-dom';
+import './PedidosPage.css';
 
-function PedidosPage() {
+function PedidosPage() { // Se tiver recebendo 'usuario' via prop, adicione { usuario } aqui. Se não, vamos pegar do localStorage ou contexto no futuro. Por enquanto assumimos que a rota protege.
   const [pedidos, setPedidos] = useState([]);
+  const [filtro, setFiltro] = useState('Todos'); // Novo Estado
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+
+  // Simulação simples para pegar perfil (idealmente viria via props do App.jsx)
+  const usuarioJson = localStorage.getItem('usuarioLogado'); 
+  const usuario = usuarioJson ? JSON.parse(usuarioJson) : null;
+  const podeAprovar = usuario && (usuario.Perfil === 'Gestor' || usuario.Perfil === 'Farmacia');
 
   useEffect(() => {
     const fetchPedidos = async () => {
       try {
-        // Chamamos nossa API para buscar todos os pedidos
-        const response = await fetch(`${import.meta.env.VITE_API_URL}/api/pedidos`, { /* ... */ });
-        if (!response.ok) {
-          throw new Error('A resposta da rede não foi OK');
+        const response = await fetch(`${import.meta.env.VITE_API_URL}/api/pedidos/`);
+        if (response.ok) {
+          const data = await response.json();
+          setPedidos(data);
         }
-        const data = await response.json();
-        setPedidos(data); // Guarda os pedidos no estado
       } catch (error) {
-        setError(error.message);
+        console.error("Erro ao buscar pedidos");
       } finally {
         setLoading(false);
       }
     };
-
     fetchPedidos();
-  }, []); // O array vazio [] garante que a busca aconteça apenas uma vez
+  }, []);
 
-  if (loading) {
-    return <p className="loading-message">Carregando pedidos...</p>;
-  }
+  // Lógica de Filtro
+  const pedidosFiltrados = pedidos.filter(pedido => {
+    // 1. Se o filtro for "Todos", mostra tudo
+    if (filtro === 'Todos') return true;
+    
+    // 2. Proteção: Se o pedido não tiver status (null), esconde para não dar erro
+    if (!pedido.Status_Pedido) return false;
 
-  if (error) {
-    return <p className="error-message">Erro ao carregar pedidos: {error}</p>;
-  }
+    // 3. A Mágica: Converte tudo para minúsculo antes de comparar
+    // Assim 'Pendente' é igual a 'pendente', 'PENDENTE', etc.
+    return pedido.Status_Pedido.toLowerCase() === filtro.toLowerCase();
+  });
 
   return (
     <div className="pedidos-container">
-      <div className="admin-nav">
-        <Link to="/admin/pedidos">Ver Pedidos</Link>
-        <Link to="/admin/usuarios">Gerenciar Usuários</Link>
-        <Link to="/admin/insumos">Gerenciar Insumos</Link>
-        {/* Futuramente: <Link to="/admin/insumos">Gerenciar Insumos</Link> */}
+      <h1>Gestão de Pedidos</h1>
+
+      {/* SELETOR DE FILTRO */}
+      <div style={{marginBottom: '20px', display: 'flex', gap: '10px', justifyContent: 'center'}}>
+        
+        <button 
+            onClick={() => setFiltro('Todos')}
+            className="action-button"
+            style={{
+                backgroundColor: filtro === 'Todos' ? '#6c757d' : '#e2e6ea',
+                color: filtro === 'Todos' ? 'white' : '#333',
+                border: 'none', opacity: 1
+            }}
+        >
+            Todos
+        </button>
+
+        <button 
+            onClick={() => setFiltro('Pendente')}
+            className="action-button"
+            style={{
+                backgroundColor: filtro === 'Pendente' ? '#ffc107' : '#fff3cd', // Amarelo/Laranja
+                color: filtro === 'Pendente' ? '#212529' : '#856404',
+                border: '1px solid #ffeeba', opacity: 1
+            }}
+        >
+            Pendente 
+        </button>
+
+        <button 
+            onClick={() => setFiltro('Atendido')}
+            className="action-button"
+            style={{
+                backgroundColor: filtro === 'Atendido' ? '#28a745' : '#d4edda', // Verde
+                color: filtro === 'Atendido' ? 'white' : '#155724',
+                border: '1px solid #c3e6cb', opacity: 1
+            }}
+        >
+            Atendido 
+        </button>
+
       </div>
-      <h1>Meus Pedidos de Reposição</h1>
+
       <div className="pedidos-list">
         <div className="pedido-header">
           <span>ID</span>
@@ -51,17 +94,15 @@ function PedidosPage() {
           <span>Viatura</span>
           <span>Status</span>
         </div>
-        {pedidos.map((pedido) => (
-          // Futuramente, este link levará para a página de detalhes do pedido
+        {pedidosFiltrados.map((pedido) => (
           <Link to={`/pedidos/${pedido.ID_Pedido}`} className="pedido-item" key={pedido.ID_Pedido}>
             <span>#{pedido.ID_Pedido}</span>
-            {/* Formatamos a data para ficar mais legível */}
             <span>{new Date(pedido.Data_Hora_Solicitacao).toLocaleDateString('pt-BR')}</span>
             <span>{pedido.Placa_Ambulancia}</span>
             <span className={`status status-${pedido.Status_Pedido.toLowerCase()}`}>{pedido.Status_Pedido}</span>
           </Link>
         ))}
-        {pedidos.length === 0 && <p>Nenhum pedido encontrado.</p>}
+        {pedidosFiltrados.length === 0 && <p style={{textAlign: 'center', padding: '20px'}}>Nenhum pedido encontrado.</p>}
       </div>
     </div>
   );

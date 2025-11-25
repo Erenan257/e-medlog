@@ -48,6 +48,13 @@ def handle_checklists():
             cursor.execute(sql_checklist, (dados['id_ambulancia'], dados['id_socorrista'], dados['turno'], dados.get('observacoes', ''), 'Revisado'))
             id_checklist_criado = cursor.lastrowid
 
+            novo_status = dados.get('status_ambulancia')
+            novo_motivo = dados.get('motivo_ambulancia')
+            
+            if novo_status:
+                sql_update_amb = "UPDATE Ambulancia SET Status_Operacional = %s, Motivo_Indisponibilidade = %s WHERE ID_Ambulancia = %s"
+                cursor.execute(sql_update_amb, (novo_status, novo_motivo, dados['id_ambulancia']))
+
             itens_para_reposicao = []
 
             # 2. Inserir cada item do checklist e verificar se precisa de reposição
@@ -59,9 +66,16 @@ def handle_checklists():
                 quantidade_reportada = item['quantidade']
                 
                 # Busca a quantidade mínima para este insumo
-                cursor.execute("SELECT Quantidade_Minima FROM Insumo WHERE ID_Insumo = %s", (item['id_insumo'],))
-                insumo_info = cursor.fetchone()
-                quantidade_minima = insumo_info['Quantidade_Minima'] if insumo_info else 0
+                sql_meta = """
+                    SELECT Quantidade_Padrao 
+                    FROM Inventario_Padrao 
+                    WHERE ID_Ambulancia = %s AND ID_Insumo = %s
+                """
+                cursor.execute(sql_meta, (dados['id_ambulancia'], item['id_insumo']))
+                config_item = cursor.fetchone()
+                
+                # Se tiver configurado no kit, usa o padrão do kit. Se não, assume 0.
+                quantidade_minima = config_item['Quantidade_Padrao'] if config_item else 0
                 
                 # Define o status com base na comparação
                 status = 'Presente' if quantidade_reportada >= quantidade_minima else 'Ausente'

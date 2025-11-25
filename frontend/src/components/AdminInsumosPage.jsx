@@ -61,11 +61,6 @@ function AdminInsumosPage() {
 
   return (
     <div className="pedidos-container">
-      <div className="admin-nav">
-        <Link to="/admin/pedidos">Ver Pedidos</Link>
-        <Link to="/admin/usuarios">Gerenciar Usuários</Link>
-        <Link to="/admin/insumos">Gerenciar Insumos</Link>
-      </div>
 
       <div className="page-header">
         <h1>Gerenciamento de Insumos</h1>
