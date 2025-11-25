@@ -65,3 +65,45 @@ def registrar_usuario():
         if err.errno == 1062:
              return jsonify({"status": "erro", "message": "Este e-mail já está em uso."}), 409
         return jsonify({"status": "erro", "message": "Erro no banco de dados.", "error": str(err)}), 500
+    
+@bp.route('/alterar-senha', methods=['POST'])
+def alterar_senha():
+    dados = request.get_json()
+    if not dados or not all(k in dados for k in ('id_usuario', 'senha_atual', 'nova_senha')):
+        return jsonify({"status": "erro", "message": "Dados incompletos"}), 400
+
+    id_usuario = dados['id_usuario']
+    senha_atual = dados['senha_atual']
+    nova_senha = dados['nova_senha']
+
+    try:
+        conn = get_db_connection()
+        cursor = conn.cursor(dictionary=True)
+        
+        # 1. Busca a senha atual do banco para conferir
+        cursor.execute("SELECT Senha_Criptografada FROM Usuario WHERE ID_Usuario = %s", (id_usuario,))
+        usuario = cursor.fetchone()
+
+        if not usuario:
+            return jsonify({"status": "erro", "message": "Usuário não encontrado"}), 404
+
+        # 2. Verifica se a senha atual bate
+        if not bcrypt.check_password_hash(usuario['Senha_Criptografada'], senha_atual):
+            return jsonify({"status": "erro", "message": "Senha atual incorreta"}), 401
+
+        # 3. Criptografa a nova senha e atualiza
+        novo_hash = bcrypt.generate_password_hash(nova_senha).decode('utf-8')
+        
+        cursor.close() # Fecha cursor de leitura
+        
+        cursor = conn.cursor() # Abre cursor de escrita
+        cursor.execute("UPDATE Usuario SET Senha_Criptografada = %s WHERE ID_Usuario = %s", (novo_hash, id_usuario))
+        conn.commit()
+        
+        cursor.close()
+        conn.close()
+
+        return jsonify({"status": "sucesso", "message": "Senha alterada com sucesso!"})
+
+    except Exception as e:
+        return jsonify(message="Erro ao alterar senha", error=str(e)), 500

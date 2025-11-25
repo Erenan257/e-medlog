@@ -2,7 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import './PedidosPage.css'; 
 
-function PedidoDetailPage() {
+// AQUI ESTAVA O ERRO: Adicionei { usuario } dentro dos parênteses
+function PedidoDetailPage({ usuario }) {
   const { id_pedido } = useParams();
   const navigate = useNavigate();
 
@@ -13,9 +14,6 @@ function PedidoDetailPage() {
   useEffect(() => {
     const fetchPedido = async () => {
       try {
-        // --- ALTERAÇÃO 1 AQUI ---
-        // ANTES: const response = await fetch(`http://localhost:5000/api/pedidos/${id_pedido}`);
-        // DEPOIS:
         const response = await fetch(`${import.meta.env.VITE_API_URL}/api/pedidos/${id_pedido}`);
         
         if (!response.ok) {
@@ -34,9 +32,6 @@ function PedidoDetailPage() {
 
   const handleAtenderPedido = async () => {
     try {
-      // --- ALTERAÇÃO 2 AQUI ---
-      // ANTES: const response = await fetch(`http://localhost:5000/api/pedidos/${id_pedido}`, { ... });
-      // DEPOIS:
       const response = await fetch(`${import.meta.env.VITE_API_URL}/api/pedidos/${id_pedido}`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
@@ -57,7 +52,6 @@ function PedidoDetailPage() {
   if (error) return <p>Erro: {error}</p>;
   if (!pedido) return <p>Pedido não encontrado.</p>;
 
-  // O JSX do return continua o mesmo
   return (
     <div className="pedidos-container">
       <h1>Detalhes do Pedido #{pedido.ID_Pedido}</h1>
@@ -82,7 +76,8 @@ function PedidoDetailPage() {
         ))}
       </div>
 
-      {pedido.Status_Pedido === 'Pendente' && (
+      {/* AGORA VAI FUNCIONAR: A variável 'usuario' existe porque a recebemos lá em cima */}
+      {pedido.Status_Pedido === 'Pendente' && usuario && (usuario.Perfil === 'Farmacia' || usuario.Perfil === 'Gestor') && (
         <button onClick={handleAtenderPedido} className="submit-button">
           Marcar como Atendido
         </button>

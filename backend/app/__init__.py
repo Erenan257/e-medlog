@@ -28,6 +28,7 @@ def create_app():
     from .routes import insumos
     from .routes import pedidos
     from .routes import checklists
+    from .routes import ambulancias
     
     # Registra os DOIS blueprints
     app.register_blueprint(auth.bp)
@@ -35,6 +36,7 @@ def create_app():
     app.register_blueprint(insumos.bp)
     app.register_blueprint(pedidos.bp)
     app.register_blueprint(checklists.bp)
+    app.register_blueprint(ambulancias.bp)
     
     @app.route('/health')
     def health_check():

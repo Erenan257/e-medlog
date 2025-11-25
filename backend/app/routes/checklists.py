@@ -48,6 +48,13 @@ def handle_checklists():
             cursor.execute(sql_checklist, (dados['id_ambulancia'], dados['id_socorrista'], dados['turno'], dados.get('observacoes', ''), 'Revisado'))
             id_checklist_criado = cursor.lastrowid
 
+            novo_status = dados.get('status_ambulancia')
+            novo_motivo = dados.get('motivo_ambulancia')
+            
+            if novo_status:
+                sql_update_amb = "UPDATE Ambulancia SET Status_Operacional = %s, Motivo_Indisponibilidade = %s WHERE ID_Ambulancia = %s"
+                cursor.execute(sql_update_amb, (novo_status, novo_motivo, dados['id_ambulancia']))
+
             itens_para_reposicao = []
 
             # 2. Inserir cada item do checklist e verificar se precisa de reposição
