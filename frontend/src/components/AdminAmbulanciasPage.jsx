@@ -112,7 +112,6 @@ function AdminAmbulanciasPage() {
           <select value={novoTipo} onChange={(e) => setNovoTipo(e.target.value)} style={{padding: '8px'}}>
             <option value="USB">USB (Básica)</option>
             <option value="USA">USA (Avançada)</option>
-            <option value="Resgate">Resgate</option>
           </select>
           <button type="submit" className="submit-button" style={{width: 'auto', marginTop: 0}}>Cadastrar</button>
         </div>
