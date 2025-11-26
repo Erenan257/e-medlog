@@ -17,6 +17,7 @@ import AdminMenu from './components/AdminMenu';
 import ChangePasswordPage from './components/ChangePasswordPage';
 import BaixarAmbulanciaPage from './components/BaixarAmbulanciaPage';
 import ConfigurarKitPage from './components/ConfigurarKitPage'; 
+import Footer from './components/Footer';
 import './App.css';
 
 function AppRoutes() {
@@ -26,11 +27,11 @@ function AppRoutes() {
   const handleLoginSuccess = (dadosUsuario) => {
     setUsuarioLogado(dadosUsuario);
     
-    // Lógica de Redirecionamento Ajustada
+    
     if (dadosUsuario.Perfil === 'Farmacia') {
-      navigate('/admin/pedidos'); // Farmácia vai direto para o trabalho dela
+      navigate('/admin/pedidos'); // farmacia vai direto para o trabalho dela
     } else {
-      // Socorrista E Gestor vão para o Dashboard (cada um vê o seu)
+      // Socorrista e Gestor vão pro Dashboard 
       navigate('/dashboard'); 
     }
   };
@@ -40,23 +41,24 @@ function AppRoutes() {
     navigate('/');
   };
 
-  // O Layout que desenha o Header
+  
   const Layout = ({ children, titulo }) => {
-    // Verifica se deve mostrar o menu extra (só se não for socorrista)
+    
     const showAdminMenu = usuarioLogado && usuarioLogado.Perfil !== 'Socorrista';
     
-    // Se tiver o menu extra, precisamos de mais espaço no topo
+    
     const paddingTop = showAdminMenu ? '140px' : '100px'; 
 
     return (
       <>
+      <div style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
         <Header titulo={titulo} onLogout={handleLogout} />
         
-        {/* O Menu Inteligente entra aqui */}
         <AdminMenu usuario={usuarioLogado} />
 
         <div className="app-content" style={{ paddingTop: paddingTop }}>
           {children}
+        </div>
         </div>
       </>
     );
@@ -64,21 +66,20 @@ function AppRoutes() {
 
   return (
     <Routes>
-      {/* ROTA DE LOGIN (Ajustada para persistência) */}
+      
       <Route 
         path="/" 
         element={
           !usuarioLogado ? (
             <LoginPage onLoginSuccess={handleLoginSuccess} />
           ) : (
-            // Lógica de Redirecionamento Automático (Se já estiver logado):
-            // Se for Farmácia -> Pedidos. Se for Gestor ou Socorrista -> Dashboard.
+            
             usuarioLogado.Perfil === 'Farmacia' ? <Navigate to="/admin/pedidos" /> : <Navigate to="/dashboard" />
           )
         } 
       />
       
-      {/* ROTAS PROTEGIDAS (Com Header via Layout) */}
+      
       
       <Route 
         path="/dashboard" 
@@ -91,7 +92,7 @@ function AppRoutes() {
         } 
       />
       
-      {/* ... Fazer o mesmo para /pedidos e /inventario se desejar ... */}
+      
 
       <Route 
         path="/checklist" 
