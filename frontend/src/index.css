@@ -1,7 +1,7 @@
-/* Define as variáveis globais para o projeto inteiro */
+
 :root {
-  --cor-principal: #38a754;      /* O azul principal */
-  --cor-principal-hover: #166fe5; /* O azul mais escuro para hover */
+  --cor-principal: #38a754;      /* A cor principal */
+  --cor-principal-hover: #166fe5; /* O azul mais escuro  */
   --cor-fundo: #f0f2f5;          /* O cinza claro do fundo das páginas */
   --cor-branco: #ffffff;
   --cor-texto-principal: #1c1e21;
@@ -13,11 +13,32 @@
 
 /* Regras de base para toda a aplicação */
 body {
-  margin: 0; /* Remove margens padrão do navegador */
+  margin: 0; 
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
     'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  background-color: var(--cor-fundo); /* Aplica a cor de fundo global */
+  background-color: var(--cor-fundo); 
+}
+
+button, a, .card-info {
+  -webkit-tap-highlight-color: transparent;
+  user-select: none;
+}
+
+
+input, select, textarea {
+  font-size: 16px !important;
+}
+
+
+button:active {
+  transform: scale(0.98);
+  transition: transform 0.1s;
+}
+
+
+html {
+  scroll-behavior: smooth;
 }
