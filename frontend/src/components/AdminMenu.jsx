@@ -14,25 +14,7 @@ function AdminMenu({ usuario }) {
   if (usuario.Perfil === 'Socorrista') return null;
 
   return (
-    <div className="admin-nav" style={{ 
-      position: 'fixed', 
-      top: '60px', 
-      left: 0, 
-      width: '100%', 
-      backgroundColor: '#f8f9fa', 
-      zIndex: 999,
-      padding: '10px 15px',
-      borderBottom: '1px solid #ddd',
-      boxSizing: 'border-box',
-      
-      display: 'flex',
-      justifyContent: 'flex-start',
-      gap: '10px',
-      overflowX: 'auto',
-      whiteSpace: 'nowrap',
-      paddingLeft: 'max(15px, env(safe-area-inset-left))',
-      paddingRight: 'max(15px, env(safe-area-inset-right))'
-    }}>
+    <div className="admin-menu-bar">
       
       {/* --- ALTERAÇÃO AQUI: Só mostra Início se for GESTOR --- */}
       {isGestor && (

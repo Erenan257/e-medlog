@@ -139,3 +139,33 @@
     margin-top: 10px;
   }
 }
+
+.admin-menu-bar {
+  position: fixed;
+  top: 60px;
+  left: 0;
+  width: 100%;
+  background-color: #f8f9fa;
+  z-index: 999;
+  padding: 10px 20px;
+  border-bottom: 1px solid #ddd;
+  box-sizing: border-box;
+  
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  
+  /* Comportamento padrão (Mobile): Alinha à esquerda e permite rolar */
+  justify-content: flex-start;
+  overflow-x: auto;
+  white-space: nowrap;
+  -webkit-overflow-scrolling: touch; /* Rolagem suave no iPhone */
+}
+
+/* Comportamento para Telas Maiores (PC/Tablet): Centraliza */
+@media (min-width: 768px) {
+  .admin-menu-bar {
+    justify-content: center; /* Centraliza no meio da tela */
+    overflow-x: visible;     /* Remove a barra de rolagem se não precisar */
+  }
+}
