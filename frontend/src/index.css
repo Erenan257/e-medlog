@@ -20,6 +20,14 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   background-color: var(--cor-fundo); 
+  padding-top: env(safe-area-inset-top);
+  padding-bottom: env(safe-area-inset-bottom);
+  padding-left: env(safe-area-inset-left);
+  padding-right: env(safe-area-inset-right);
+  
+  /* Garante o fundo total */
+  min-height: 100vh;
+  background-color: var(--cor-fundo);
 }
 
 button, a, .card-info {

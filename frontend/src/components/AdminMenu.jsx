@@ -21,14 +21,17 @@ function AdminMenu({ usuario }) {
       width: '100%', 
       backgroundColor: '#f8f9fa', 
       zIndex: 999,
-      padding: '10px 20px',
+      padding: '10px 15px',
       borderBottom: '1px solid #ddd',
       boxSizing: 'border-box',
       
       display: 'flex',
-      justifyContent: 'center',
-      gap: '15px',
-      overflowX: 'auto'
+      justifyContent: 'flex-start',
+      gap: '10px',
+      overflowX: 'auto',
+      whiteSpace: 'nowrap',
+      paddingLeft: 'max(15px, env(safe-area-inset-left))',
+      paddingRight: 'max(15px, env(safe-area-inset-right))'
     }}>
       
       {/* --- ALTERAÇÃO AQUI: Só mostra Início se for GESTOR --- */}
