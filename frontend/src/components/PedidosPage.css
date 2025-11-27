@@ -169,3 +169,25 @@
     overflow-x: visible;     /* Remove a barra de rolagem se não precisar */
   }
 }
+
+.admin-menu-bar a {
+  text-decoration: none;
+  color: var(--cor-principal); /* Usa o verde do tema */
+  font-weight: 500;
+  padding: 8px 12px;
+  border-radius: 4px;
+  transition: all 0.2s ease;
+}
+
+/* Efeito ao passar o mouse */
+.admin-menu-bar a:hover {
+  background-color: #e9ecef;
+  color: var(--cor-principal-hover);
+}
+
+/* Link Ativo (A página atual) */
+.admin-menu-bar a.active-link {
+  background-color: var(--cor-principal); /* Fundo verde */
+  color: var(--cor-branco); /* Texto branco */
+  font-weight: bold;
+}
