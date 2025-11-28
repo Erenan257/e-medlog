@@ -45,7 +45,7 @@ O projeto foi construído utilizando uma arquitetura moderna e modular:
 * **Gunicorn**: Servidor WSGI para executar a aplicação Python em produção.
 * **Cloudflare Tunnel**: Para acesso remoto seguro via HTTPS.
 
----
+
 
 ## Funcionalidades Principais
 
@@ -65,7 +65,7 @@ O projeto foi construído utilizando uma arquitetura moderna e modular:
 * **Gestão de Insumos (CRUD):** Controle total sobre o catálogo de materiais e estoques mínimos.
 * **Controle de Ambulâncias:** Monitoramento do status das viaturas (Apta/Inapta).
 
----
+
 
 ## Screenshots
 
@@ -74,7 +74,7 @@ O projeto foi construído utilizando uma arquitetura moderna e modular:
 |:---:|:---:|:---:|
 | ![Login](frontend/public/print_login.png) | ![Dashboard](frontend/public/print_dashboard.png) | ![Checklist](frontend/public/print_checklist.png) |
 
----
+
 
 ## Como Executar Localmente
 
