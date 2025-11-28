@@ -1,70 +1,74 @@
-# 🚑 E-MedLog: Gestão de Insumos para Ambulâncias
+# E-MedLog: Gestão de Insumos para Ambulâncias
 
 > Agilidade na Linha de Frente da Saúde: Sistema Web (PWA) para Gerenciamento de Insumos em Ambulâncias de UPAs.
 
-![Status do Projeto](https://img.shields.io/badge/Status-Concluído-brightgreen)
+![Status do Projeto](https://img.shields.io/badge/Status-Concluído-green)
 ![Licença](https://img.shields.io/badge/license-MIT-blue)
 
-## 📖 Sobre o Projeto
+##  Acesso ao Sistema
 
-[cite_start]O **E-MedLog** é um sistema desenvolvido para modernizar e otimizar o fluxo de reposição de materiais médicos em viaturas de emergência[cite: 536].
+O sistema está implantado e acessível através do seguinte endereço:
 
-[cite_start]O projeto substitui o antigo método manual (baseado em formulários de papel) por uma solução digital eficiente que garante rastreabilidade e segurança[cite: 538]. O sistema funciona como um **Progressive Web App (PWA)**, permitindo que socorristas realizem checklists e pedidos diretamente de dispositivos móveis, mesmo em trânsito.
+**[https://emedlog.com.br](https://emedlog.com.br)**
 
-[cite_start]O sistema foi implantado e validado em um ambiente de servidor local utilizando **Raspberry Pi**, demonstrando a viabilidade de uma infraestrutura de baixo custo e alta eficiência para o setor público[cite: 550].
 
----
+## Sobre o Projeto
 
-## 🛠️ Tecnologias Utilizadas
+O **E-MedLog** é um sistema desenvolvido para modernizar e otimizar o fluxo de reposição de materiais médicos em viaturas de emergência.
+
+O projeto substitui o antigo método manual (baseado em formulários de papel) por uma solução digital eficiente que garante rastreabilidade e segurança. O sistema funciona como um **Progressive Web App (PWA)**, permitindo que socorristas realizem checklists e pedidos diretamente de dispositivos móveis, mesmo em trânsito.
+
+
+
+## Tecnologias Utilizadas
 
 O projeto foi construído utilizando uma arquitetura moderna e modular:
 
 ### Front-end (Interface)
-* [cite_start]**[React](https://reactjs.org/)**: Biblioteca principal para construção da interface[cite: 541].
+* **React**: Biblioteca principal para construção da interface.
 * **Vite**: Ferramenta de build rápida e otimizada.
 * **React Router DOM**: Gerenciamento de rotas e navegação.
 * **CSS Modules / Variáveis CSS**: Estilização responsiva e padronizada (Mobile First).
 
 ### Back-end (API)
-* **[Python](https://www.python.org/)**: Linguagem principal.
-* [cite_start]**[Flask](https://flask.palletsprojects.com/)**: Microframework para criação da API RESTful[cite: 541].
+* **Python**: Linguagem principal.
+* **Flask**: Microframework para criação da API RESTful.
 * **Flask-Bcrypt**: Para criptografia segura de senhas.
 * **Flask-Cors**: Para gerenciamento de segurança cross-origin.
 
 ### Banco de Dados
-* [cite_start]**[MariaDB](https://mariadb.org/)**: Banco de dados relacional para persistência segura das informações[cite: 541].
+* **MariaDB**: Banco de dados relacional para persistência segura das informações.
 
 ### Infraestrutura e Deploy
-* [cite_start]**Raspberry Pi 2 Model B**: Servidor de hospedagem[cite: 550].
-* [cite_start]**Nginx**: Servidor web e Proxy Reverso[cite: 1044].
-* [cite_start]**Gunicorn**: Servidor WSGI para executar a aplicação Python em produção[cite: 1036].
-* [cite_start]**Cloudflare Tunnel**: Para acesso remoto seguro via HTTPS[cite: 1045].
+* **Raspberry Pi 2 Model B**: Servidor de hospedagem.
+* **Nginx**: Servidor web e Proxy Reverso.
+* **Gunicorn**: Servidor WSGI para executar a aplicação Python em produção.
+* **Cloudflare Tunnel**: Para acesso remoto seguro via HTTPS.
 
 ---
 
-## ✨ Funcionalidades Principais
+## Funcionalidades Principais
 
-### 🚑 Perfil Socorrista
-* [cite_start]**Checklist Inteligente:** Lista padronizada de insumos com indicação de quantidade mínima[cite: 1091].
-* [cite_start]**Preenchimento Quantitativo:** Informa a quantidade real encontrada na viatura[cite: 549].
-* [cite_start]**Pedido Automático:** O sistema calcula a diferença e gera o pedido de reposição automaticamente apenas para os itens em falta[cite: 1093].
+### Perfil Socorrista
+* **Checklist Inteligente:** Lista padronizada de insumos com indicação de quantidade mínima.
+* **Preenchimento Quantitativo:** Informa a quantidade real encontrada na viatura.
+* **Pedido Automático:** O sistema calcula a diferença e gera o pedido de reposição automaticamente apenas para os itens em falta.
 * **Histórico:** Visualização dos pedidos anteriores e seus status.
 
-### 💊 Perfil Farmácia
-* [cite_start]**Gestão de Pedidos:** Visualização em tempo real de pedidos pendentes[cite: 1095].
+### Perfil Farmácia
+* **Gestão de Pedidos:** Visualização em tempo real de pedidos pendentes.
 * **Atendimento:** Detalhamento dos itens solicitados e marcação de pedidos como "Atendidos".
 
-### 👨‍💼 Perfil Gestor
+### Perfil Gestor
 * **Dashboard Administrativo:** Visão geral do sistema.
-* [cite_start]**Gestão de Usuários (CRUD):** Cadastro, edição e inativação de socorristas e farmacêuticos[cite: 1096].
-* [cite_start]**Gestão de Insumos (CRUD):** Controle total sobre o catálogo de materiais e estoques mínimos[cite: 1096].
+* **Gestão de Usuários (CRUD):** Cadastro, edição e inativação de socorristas e farmacêuticos.
+* **Gestão de Insumos (CRUD):** Controle total sobre o catálogo de materiais e estoques mínimos.
 * **Controle de Ambulâncias:** Monitoramento do status das viaturas (Apta/Inapta).
 
 ---
 
-## 📸 Screenshots
+## Screenshots
 
-*(Adicione aqui as imagens das telas finais do seu sistema, como o Dashboard e o Checklist)*
 
 | Login | Dashboard | Checklist |
 |:---:|:---:|:---:|
@@ -72,7 +76,7 @@ O projeto foi construído utilizando uma arquitetura moderna e modular:
 
 ---
 
-## 🚀 Como Executar Localmente
+## Como Executar Localmente
 
 Para rodar o projeto na sua máquina para desenvolvimento:
 
@@ -85,8 +89,8 @@ Para rodar o projeto na sua máquina para desenvolvimento:
 
 ```bash
 # Clone o repositório
-git clone [https://github.com/seu-usuario/emedlog.git](https://github.com/seu-usuario/emedlog.git)
-cd emedlog/backend
+git clone [https://github.com/Erenan257/tcc.git](https://github.com/Erenan257/tcc.git)
+cd tcc/backend
 
 # Crie e ative o ambiente virtual
 python -m venv venv
@@ -104,3 +108,19 @@ python seed.py
 
 # Inicie o servidor
 python run.py
+
+# Em um novo terminal, vá para a pasta do frontend
+cd ../frontend
+
+# Crie o arquivo .env com o IP do seu backend
+echo "VITE_API_URL=http://localhost:5000" > .env
+
+# Instale as dependências
+npm install
+
+# Inicie o servidor de desenvolvimento
+npm run dev
+
+Autor
+
+    Renan Eduardo da Silva Souza - Desenvolvimento e Documentação
