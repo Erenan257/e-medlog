@@ -14,17 +14,17 @@ function ChecklistPage({ usuario }) {
 
   const navigate = useNavigate();
 
-  // 1. Carregar Ambulâncias (Ao abrir a tela)
+  
   useEffect(() => {
     const fetchAmbulancias = async () => {
       try {
         const res = await fetch(`${import.meta.env.VITE_API_URL}/api/ambulancias`);
         if (res.ok) {
             const data = await res.json();
-            // Carrega TODAS as ambulâncias (Aptas e Inaptas) para permitir o "resgate"
+            
             setAmbulancias(data);
             
-            // Tenta selecionar uma Inapta primeiro (prioridade para o socorrista arrumar), senão pega a primeira
+            
             const inapta = data.find(a => a.Status_Operacional === 'Inapto');
             if (inapta) {
                 setSelectedAmbulancia(inapta.ID_Ambulancia);
@@ -140,7 +140,7 @@ function ChecklistPage({ usuario }) {
       <form className="checklist-form" onSubmit={handleSubmit}>
         <h1>Realizar Checklist</h1>
 
-        {/* SELETOR DE AMBULÂNCIA (SEM EMOJIS) */}
+        {/* SELETOR DE AMBULÂNCIA  */}
         <div className="input-group" style={{marginBottom: '15px'}}>
             <label>Viatura:</label>
             <select 

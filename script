@@ -1,11 +1,10 @@
-#!/bin/bash
-set -e  # parar se algo der errado
 
-# --- Variáveis de Ambiente ---
-# Detecta o usuário e o diretório home automaticamente
+set -e  
+
+
 CURRENT_USER=$(whoami)
 USER_HOME=$HOME
-# -----------------------------
+
 
 LOGFILE="${USER_HOME}/install_tcc_lite.log"
 exec > >(tee -a "$LOGFILE") 2>&1
@@ -20,7 +19,6 @@ sudo apt update
 sudo apt upgrade -y
 
 echo "2) Instalando pacotes básicos..."
-# Alterado para mariadb-server como você perguntou antes
 sudo apt install -y git python3 python3-venv python3-pip \
                    nodejs npm nginx mariadb-server
 
@@ -35,7 +33,6 @@ else
 fi
 
 echo "4) Clonando repositório do TCC..."
-# Alterado para usar a variável $USER_HOME
 cd ${USER_HOME}
 git clone https://github.com/Erenan257/tcc.git || \
     { echo "Repositório já existe ou clonagem falhou, continuando..."; }
@@ -56,7 +53,6 @@ echo "6) Banco de dados MariaDB – criando e importando schema..."
 DB_NAME="emlog_db"
 DB_USER="root"
 
-# Correção de segurança: Perguntar a senha
 echo "Por favor, digite a senha 'root' do MariaDB:"
 read -s DB_PASS 
 
@@ -70,7 +66,6 @@ else
 fi
 
 echo "7) Criando serviço systemd para backend..."
-# Alterado para usar as variáveis de usuário e home
 sudo tee /etc/systemd/system/tcc-backend.service > /dev/null <<EOF
 [Unit]
 Description=TCC Backend Service
@@ -98,7 +93,6 @@ npm install || { echo "Erro npm install"; exit 1; }
 npm run build || { echo "Erro npm run build"; exit 1; }
 
 echo "9) Configurando Nginx..."
-# Alterado para usar a variável $USER_HOME
 sudo tee /etc/nginx/sites-available/tcc > /dev/null <<EOF
 server {
     listen 80;

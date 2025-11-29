@@ -4,10 +4,10 @@ from flask import Blueprint, request, jsonify
 from app import bcrypt, get_db_connection
 import mysql.connector
 
-# O prefixo /api/usuarios será adicionado a todas as rotas abaixo
+
 bp = Blueprint('usuarios', __name__, url_prefix='/api')
 
-# Rota para LISTAR (GET) e CRIAR (POST) usuários
+
 @bp.route('/usuarios', methods=['GET', 'POST'])
 def handle_usuarios():
     conn = get_db_connection()
@@ -51,7 +51,7 @@ def handle_usuarios():
             cursor.close()
             conn.close()
 
-# Rota para EDITAR (PUT), INATIVAR (DELETE) e REATIVAR (PATCH) um usuário
+
 @bp.route('/usuarios/<int:id_usuario>', methods=['GET', 'PUT', 'DELETE', 'PATCH'])
 def handle_usuario_by_id(id_usuario):
     conn = get_db_connection()
@@ -98,11 +98,10 @@ def handle_usuario_by_id(id_usuario):
             conn.close()
 
     elif request.method == 'DELETE' or request.method == 'PATCH':
-        # --- TRAVA DE SEGURANÇA: SUPER ADMIN ---
-        # Impede que o usuário ID 1 seja inativado ou excluído
+        
         if id_usuario == 1:
             return jsonify({"status": "erro", "message": "OPERAÇÃO NEGADA: O Super Admin não pode ser inativado."}), 403
-        # ---------------------------------------
+       
 
         is_active = request.method == 'PATCH'
         if request.method == 'PATCH':

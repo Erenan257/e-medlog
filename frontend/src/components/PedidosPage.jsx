@@ -2,12 +2,12 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import './PedidosPage.css';
 
-function PedidosPage() { // Se tiver recebendo 'usuario' via prop, adicione { usuario } aqui. Se não, vamos pegar do localStorage ou contexto no futuro. Por enquanto assumimos que a rota protege.
+function PedidosPage() { 
   const [pedidos, setPedidos] = useState([]);
-  const [filtro, setFiltro] = useState('Todos'); // Novo Estado
+  const [filtro, setFiltro] = useState('Todos'); 
   const [loading, setLoading] = useState(true);
 
-  // Simulação simples para pegar perfil (idealmente viria via props do App.jsx)
+  
   const usuarioJson = localStorage.getItem('usuarioLogado'); 
   const usuario = usuarioJson ? JSON.parse(usuarioJson) : null;
   const podeAprovar = usuario && (usuario.Perfil === 'Gestor' || usuario.Perfil === 'Farmacia');
@@ -29,16 +29,15 @@ function PedidosPage() { // Se tiver recebendo 'usuario' via prop, adicione { us
     fetchPedidos();
   }, []);
 
-  // Lógica de Filtro
+ 
   const pedidosFiltrados = pedidos.filter(pedido => {
-    // 1. Se o filtro for "Todos", mostra tudo
+    
     if (filtro === 'Todos') return true;
     
-    // 2. Proteção: Se o pedido não tiver status (null), esconde para não dar erro
+   
     if (!pedido.Status_Pedido) return false;
 
-    // 3. A Mágica: Converte tudo para minúsculo antes de comparar
-    // Assim 'Pendente' é igual a 'pendente', 'PENDENTE', etc.
+    
     return pedido.Status_Pedido.toLowerCase() === filtro.toLowerCase();
   });
 

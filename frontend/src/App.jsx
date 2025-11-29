@@ -29,9 +29,9 @@ function AppRoutes() {
     
     
     if (dadosUsuario.Perfil === 'Farmacia') {
-      navigate('/admin/pedidos'); // farmacia vai direto para o trabalho dela
+      navigate('/admin/pedidos'); 
     } else {
-      // Socorrista e Gestor vão pro Dashboard 
+      
       navigate('/dashboard'); 
     }
   };

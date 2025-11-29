@@ -1,4 +1,4 @@
-# backend/app/__init__.py
+
 from flask import Flask
 from flask_bcrypt import Bcrypt
 from flask_cors import CORS
@@ -22,7 +22,7 @@ def create_app():
     bcrypt.init_app(app)
     cors.init_app(app, resources={r"/api/*": {"origins": "*"}}) 
 
-    # Importa os DOIS blueprints
+    
     from .routes import auth
     from .routes import usuarios
     from .routes import insumos
@@ -30,7 +30,7 @@ def create_app():
     from .routes import checklists
     from .routes import ambulancias
     
-    # Registra os DOIS blueprints
+    
     app.register_blueprint(auth.bp)
     app.register_blueprint(usuarios.bp)
     app.register_blueprint(insumos.bp)

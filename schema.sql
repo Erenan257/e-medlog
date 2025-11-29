@@ -1,13 +1,13 @@
--- Remove o banco de dados se ele já existir, para começar do zero.
+
 DROP SCHEMA IF EXISTS emlog_db;
 
--- Cria o banco de dados.
+
 CREATE SCHEMA emlog_db;
 
--- Seleciona o banco de dados recém-criado para os comandos seguintes.
+
 USE emlog_db;
 
--- Tabela para armazenar os dados dos usuários do sistema [cite: 303]
+
 CREATE TABLE Usuario (
     ID_Usuario INT PRIMARY KEY AUTO_INCREMENT,
     Nome VARCHAR(255) NOT NULL,
@@ -19,7 +19,7 @@ CREATE TABLE Usuario (
     Data_Cadastro TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
--- Tabela para armazenar as informações das ambulâncias [cite: 303]
+
 CREATE TABLE Ambulancia (
     ID_Ambulancia INT PRIMARY KEY AUTO_INCREMENT,
     Placa VARCHAR(10) NOT NULL UNIQUE,
@@ -28,7 +28,7 @@ CREATE TABLE Ambulancia (
     Data_Cadastro TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
--- Tabela para cadastrar todos os tipos de insumos médicos [cite: 303]
+
 CREATE TABLE Insumo (
     ID_Insumo INT PRIMARY KEY AUTO_INCREMENT,
     Nome_Insumo VARCHAR(255) NOT NULL,
@@ -40,7 +40,7 @@ CREATE TABLE Insumo (
     Data_Cadastro TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
--- Tabela para registrar cada checklist realizado [cite: 303]
+
 CREATE TABLE Checklist_Diario (
     ID_Checklist INT PRIMARY KEY AUTO_INCREMENT,
     ID_Ambulancia INT,
@@ -53,7 +53,7 @@ CREATE TABLE Checklist_Diario (
     FOREIGN KEY (ID_Socorrista) REFERENCES Usuario(ID_Usuario)
 );
 
--- Tabela para registrar os itens verificados em cada checklist [cite: 303]
+
 CREATE TABLE Itens_Checklist (
     ID_Itens_Checklist INT PRIMARY KEY AUTO_INCREMENT,
     ID_Checklist INT,
@@ -64,7 +64,7 @@ CREATE TABLE Itens_Checklist (
     FOREIGN KEY (ID_Insumo) REFERENCES Insumo(ID_Insumo)
 );
 
--- Tabela para registrar os pedidos de reposição [cite: 303]
+
 CREATE TABLE Pedido_Reposicao (
     ID_Pedido INT PRIMARY KEY AUTO_INCREMENT,
     ID_Checklist INT,
@@ -78,7 +78,7 @@ CREATE TABLE Pedido_Reposicao (
     FOREIGN KEY (ID_Farmacia_Responsavel) REFERENCES Usuario(ID_Usuario)
 );
 
--- Tabela para detalhar os itens de cada pedido de reposição [cite: 303]
+
 CREATE TABLE Itens_Pedido (
     ID_Itens_Pedido INT PRIMARY KEY AUTO_INCREMENT,
     ID_Pedido INT,

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import '../components/PedidosPage.css'; // Reusa estilos
+import '../components/PedidosPage.css'; 
 
 function BaixarAmbulanciaPage() {
   const navigate = useNavigate();
@@ -12,7 +12,7 @@ function BaixarAmbulanciaPage() {
     const fetchAmb = async () => {
         const res = await fetch(`${import.meta.env.VITE_API_URL}/api/ambulancias`);
         const data = await res.json();
-        // Só mostra as que estão Aptas (para serem baixadas)
+        
         setAmbulancias(data.filter(a => a.Status_Operacional === 'Apto'));
     };
     fetchAmb();
@@ -32,7 +32,7 @@ function BaixarAmbulanciaPage() {
                 placa: amb.Placa, 
                 tipo: amb.Tipo_Ambulancia, 
                 status: 'Inapto', 
-                motivo: motivo // O Backend precisa aceitar esse campo extra no PUT! (Veja nota abaixo)
+                motivo: motivo 
             })
         });
         if(response.ok) {

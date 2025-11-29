@@ -1,12 +1,12 @@
 import React from 'react';
-import { useNavigate, useLocation, Link } from 'react-router-dom'; // <--- AQUI ESTAVA O ERRO (Faltava o Link)
+import { useNavigate, useLocation, Link } from 'react-router-dom'; 
 import logoImg from '../assets/logo512.png';
 
 function Header({ titulo, onLogout }) {
   const navigate = useNavigate();
   const location = useLocation();
 
-  // Define em quais páginas o botão "Voltar" NÃO deve aparecer
+  
   const hideBackButton = location.pathname === '/dashboard' || location.pathname === '/' || location.pathname === '/admin/pedidos';
 
   return (
@@ -42,7 +42,7 @@ function Header({ titulo, onLogout }) {
   );
 }
 
-// Estilos simples embutidos para facilitar
+
 const styles = {
   header: {
     display: 'flex',
@@ -61,7 +61,7 @@ const styles = {
   },
   left: { flex: 1 },
   center: { flex: 2, textAlign: 'center' },
-  right: { flex: 1, textAlign: 'right', display: 'flex', alignItems: 'center', justifyContent: 'flex-end' }, // Adicionei flex aqui para alinhar os botões da direita
+  right: { flex: 1, textAlign: 'right', display: 'flex', alignItems: 'center', justifyContent: 'flex-end' }, 
   title: {
     margin: 0,
     color: 'var(--cor-principal)', 
@@ -95,7 +95,7 @@ const styles = {
     color: '#555',
     display: 'inline-flex',
     alignItems: 'center',
-    height: '20px' // Altura fixa para alinhar com o botão de sair
+    height: '20px' 
   }
 };
 

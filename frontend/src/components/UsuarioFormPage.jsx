@@ -17,9 +17,7 @@ function UsuarioFormPage() {
     if (isEditMode) {
       const fetchUsuario = async () => {
         try {
-          // --- ALTERAÇÃO 1 AQUI ---
-          // ANTES: const response = await fetch(`http://localhost:5000/api/usuarios/${id_usuario}`);
-          // DEPOIS:
+          
           const response = await fetch(`${import.meta.env.VITE_API_URL}/api/usuarios/${id_usuario}`);
 
           const data = await response.json();
@@ -41,8 +39,7 @@ function UsuarioFormPage() {
   const handleSubmit = async (event) => {
     event.preventDefault();
     
-    // --- ALTERAÇÃO 2 AQUI (na variável 'url' e no 'fetch' final) ---
-    // A variável 'url' agora guarda apenas o caminho, não a URL completa
+    
     const urlPath = isEditMode 
       ? `/api/usuarios/${id_usuario}` 
       : '/api/usuarios';
@@ -55,7 +52,7 @@ function UsuarioFormPage() {
     }
 
     try {
-      // A URL completa é montada aqui, usando a variável de ambiente
+      
       const response = await fetch(`${import.meta.env.VITE_API_URL}${urlPath}`, {
         method: method,
         headers: { 'Content-Type': 'application/json' },
@@ -74,7 +71,7 @@ function UsuarioFormPage() {
     }
   };
 
-  // O JSX do return continua o mesmo
+  
   return (
     <div className="login-container">
       <form className="login-form" onSubmit={handleSubmit}>

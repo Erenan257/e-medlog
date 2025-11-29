@@ -11,7 +11,7 @@ def handle_insumos():
 
     if request.method == 'GET':
         try:
-            # MUDANÇA: Traz apenas os ativos (is_active = TRUE)
+            
             cursor.execute('SELECT * FROM Insumo WHERE is_active = TRUE ORDER BY Nome_Insumo ASC')
             insumos = cursor.fetchall()
             return jsonify(insumos)
@@ -28,7 +28,7 @@ def handle_insumos():
             return jsonify({"status": "erro", "message": "Dados do insumo incompletos"}), 400
         
         try:
-            # MUDANÇA: Agora temos is_active (padrão True no banco, mas boa prática saber)
+            
             sql = "INSERT INTO Insumo (Nome_Insumo, Unidade_Medida, Quantidade_Minima, Descricao, Critico, Categoria) VALUES (%s, %s, %s, %s, %s, %s)"
             cursor.execute(sql, (
                 dados['nome_insumo'], dados['unidade_medida'], dados['quantidade_minima'],
@@ -77,7 +77,7 @@ def handle_insumo_by_id(id_insumo):
     
     elif request.method == 'DELETE':
         try:
-            # MUDANÇA PRINCIPAL: Soft Delete (apenas desativa)
+           
             sql = "UPDATE Insumo SET is_active = FALSE WHERE ID_Insumo = %s"
             cursor.execute(sql, (id_insumo,))
             conn.commit()

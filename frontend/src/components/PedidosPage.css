@@ -102,16 +102,16 @@
   font-size: 14px;
 }
 
-/* --- AJUSTES RESPONSIVOS PARA AS LISTAS DE ADMIN --- */
+
 
 @media (max-width: 768px) {
-  /* Esconde o cabeçalho da tabela em telas pequenas */
+  
   .pedido-header {
     display: none;
   }
 
   .pedido-item {
-    /* Muda o layout de grid para bloco */
+    
     display: block;
     border: 1px solid var(--cor-borda);
     border-radius: 8px;
@@ -119,9 +119,9 @@
     padding: 15px;
   }
 
-  /* Adiciona "labels" antes de cada informação para dar contexto */
+  
   .pedido-item span::before {
-    content: attr(data-label); /* Pega o texto do atributo data-label */
+    content: attr(data-label); 
     font-weight: bold;
     display: block;
     margin-bottom: 5px;
@@ -129,13 +129,13 @@
   }
 
   .pedido-item span {
-    display: block; /* Faz cada span ocupar uma linha */
+    display: block; 
     margin-bottom: 10px;
     width: 100%;
   }
 
   .item-actions {
-    justify-content: flex-start; /* Alinha os botões à esquerda */
+    justify-content: flex-start; 
     margin-top: 10px;
   }
 }
@@ -155,39 +155,38 @@
   align-items: center;
   gap: 15px;
   
-  /* Comportamento padrão (Mobile): Alinha à esquerda e permite rolar */
+  
   justify-content: flex-start;
   overflow-x: auto;
   white-space: nowrap;
-  -webkit-overflow-scrolling: touch; /* Rolagem suave no iPhone */
+  -webkit-overflow-scrolling: touch;
 }
 
-/* Comportamento para Telas Maiores (PC/Tablet): Centraliza */
+
 @media (min-width: 768px) {
   .admin-menu-bar {
-    justify-content: center; /* Centraliza no meio da tela */
-    overflow-x: visible;     /* Remove a barra de rolagem se não precisar */
+    justify-content: center; 
+    overflow-x: visible;     
   }
 }
 
 .admin-menu-bar a {
   text-decoration: none;
-  color: var(--cor-principal); /* Usa o verde do tema */
-  font-weight: 500;
+  color: var(--cor-principal); 
   padding: 8px 12px;
   border-radius: 4px;
   transition: all 0.2s ease;
 }
 
-/* Efeito ao passar o mouse */
+
 .admin-menu-bar a:hover {
   background-color: #e9ecef;
   color: var(--cor-principal-hover);
 }
 
-/* Link Ativo (A página atual) */
+
 .admin-menu-bar a.active-link {
-  background-color: var(--cor-principal); /* Fundo verde */
-  color: var(--cor-branco); /* Texto branco */
+  background-color: var(--cor-principal); 
+  color: var(--cor-branco); 
   font-weight: bold;
 }

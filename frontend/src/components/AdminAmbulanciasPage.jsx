@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom'; // <--- 1. IMPORT NECESSÁRIO
+import { useNavigate } from 'react-router-dom'; 
 import './PedidosPage.css';
 
 function AdminAmbulanciasPage() {
-  // --- 2. INICIALIZAR O HOOK ---
+  
   const navigate = useNavigate(); 
   
   const [ambulancias, setAmbulancias] = useState([]);
@@ -11,7 +11,7 @@ function AdminAmbulanciasPage() {
   const [novaPlaca, setNovaPlaca] = useState('');
   const [novoTipo, setNovoTipo] = useState('USB');
 
-  // Buscar ambulâncias
+  
   const fetchAmbulancias = async () => {
     try {
       const response = await fetch(`${import.meta.env.VITE_API_URL}/api/ambulancias`);
@@ -28,7 +28,7 @@ function AdminAmbulanciasPage() {
     fetchAmbulancias();
   }, []);
 
-  // Criar nova ambulância
+  
   const handleCriar = async (e) => {
     e.preventDefault();
     try {
@@ -50,7 +50,7 @@ function AdminAmbulanciasPage() {
     }
   };
 
-  // Função: Tornar Apta
+  
   const handleTornarApta = async (id) => {
     try {
         const response = await fetch(`${import.meta.env.VITE_API_URL}/api/ambulancias/${id}`, {
@@ -73,7 +73,7 @@ function AdminAmbulanciasPage() {
     }
   };
 
-  // Excluir ambulância
+  
   const handleExcluir = async (id) => {
     if (!confirm('Tem certeza? Isso apagará o histórico desta viatura se houver.')) return;
     

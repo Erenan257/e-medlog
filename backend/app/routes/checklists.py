@@ -1,4 +1,3 @@
-# backend/app/routes/checklists.py
 
 from flask import Blueprint, request, jsonify
 from app import get_db_connection
@@ -6,7 +5,7 @@ import mysql.connector
 
 bp = Blueprint('checklists', __name__, url_prefix='/api')
 
-# Rota para LISTAR (GET) e CRIAR (POST) checklists
+
 @bp.route('/checklists', methods=['GET', 'POST'])
 def handle_checklists():
     if request.method == 'GET':
@@ -41,9 +40,9 @@ def handle_checklists():
         conn = None
         try:
             conn = get_db_connection()
-            cursor = conn.cursor(dictionary=True) # Usar dictionary=True para facilitar
+            cursor = conn.cursor(dictionary=True) 
 
-            # 1. Inserir o registro principal do Checklist
+           
             sql_checklist = "INSERT INTO Checklist_Diario (ID_Ambulancia, ID_Socorrista, Turno, Observacoes_Gerais, Status_Final_Ambulancia) VALUES (%s, %s, %s, %s, %s)"
             cursor.execute(sql_checklist, (dados['id_ambulancia'], dados['id_socorrista'], dados['turno'], dados.get('observacoes', ''), 'Revisado'))
             id_checklist_criado = cursor.lastrowid
@@ -57,7 +56,7 @@ def handle_checklists():
 
             itens_para_reposicao = []
 
-            # 2. Inserir cada item do checklist e verificar se precisa de reposição
+            
             sql_item_checklist = "INSERT INTO Itens_Checklist (ID_Checklist, ID_Insumo, Status_Item, Quantidade_Reportada, Observacoes_Item) VALUES (%s, %s, %s, %s, %s)"
             for item in dados['itens']:
                 if not 'id_insumo' in item or not 'quantidade' in item:
@@ -65,7 +64,7 @@ def handle_checklists():
 
                 quantidade_reportada = item['quantidade']
                 
-                # Busca a quantidade mínima para este insumo
+                
                 sql_meta = """
                     SELECT Quantidade_Padrao 
                     FROM Inventario_Padrao 
@@ -74,20 +73,20 @@ def handle_checklists():
                 cursor.execute(sql_meta, (dados['id_ambulancia'], item['id_insumo']))
                 config_item = cursor.fetchone()
                 
-                # Se tiver configurado no kit, usa o padrão do kit. Se não, assume 0.
+                
                 quantidade_minima = config_item['Quantidade_Padrao'] if config_item else 0
                 
-                # Define o status com base na comparação
+                
                 status = 'Presente' if quantidade_reportada >= quantidade_minima else 'Ausente'
 
                 cursor.execute(sql_item_checklist, (id_checklist_criado, item['id_insumo'], status, quantidade_reportada, item.get('observacao', '')))
 
-                # 3. Se a quantidade for menor que a mínima, adiciona à lista de reposição
+                
                 if quantidade_reportada < quantidade_minima:
                     quantidade_necessaria = quantidade_minima - quantidade_reportada
                     itens_para_reposicao.append({'id_insumo': item['id_insumo'], 'quantidade': quantidade_necessaria})
 
-            # 4. Se houver itens na lista de reposição, cria o Pedido
+           
             if itens_para_reposicao:
                 sql_pedido = "INSERT INTO Pedido_Reposicao (ID_Checklist, ID_Socorrista_Solicitante, Status_Pedido) VALUES (%s, %s, %s)"
                 cursor.execute(sql_pedido, (id_checklist_criado, dados['id_socorrista'], 'Pendente'))

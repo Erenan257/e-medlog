@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import '../components/PedidosPage.css'; // Reutilizando estilos
+import '../components/PedidosPage.css'; 
 
 function ConfigurarKitPage() {
   const { id_ambulancia } = useParams();
@@ -13,23 +13,23 @@ function ConfigurarKitPage() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        // 1. Busca todos os insumos disponíveis no sistema
+        
         const resInsumos = await fetch(`${import.meta.env.VITE_API_URL}/api/insumos`);
         const listaInsumos = await resInsumos.json();
 
-        // 2. Busca a configuração ATUAL desta ambulância (se já tiver)
+        
         const resConfig = await fetch(`${import.meta.env.VITE_API_URL}/api/ambulancias/${id_ambulancia}/itens`);
         const configAtual = await resConfig.json();
 
-        // 3. Monta o mapa de quantidades
+        
         const mapaQuantidades = {};
         
-        // Primeiro zera tudo
+        
         listaInsumos.forEach(item => {
             mapaQuantidades[item.ID_Insumo] = 0;
         });
 
-        // Depois preenche com o que já está configurado no banco
+        
         configAtual.forEach(item => {
             mapaQuantidades[item.ID_Insumo] = item.Quantidade_Minima;
         });
@@ -53,7 +53,7 @@ function ConfigurarKitPage() {
   };
 
   const handleSalvar = async () => {
-    // Transforma o objeto em lista para enviar
+    
     const payload = Object.keys(quantidades).map(id => ({
         id_insumo: id,
         qtd: quantidades[id]

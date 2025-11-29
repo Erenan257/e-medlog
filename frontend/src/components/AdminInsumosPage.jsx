@@ -1,18 +1,16 @@
 import React, { useState, useEffect } from 'react';
-// 1. Importamos o useNavigate para usar na edição
 import { Link, useNavigate } from 'react-router-dom';
-import './PedidosPage.css'; // Reutilizando estilos
+import './PedidosPage.css'; 
 
 function AdminInsumosPage() {
   const [insumos, setInsumos] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const navigate = useNavigate(); // Inicializamos o hook de navegação
+  const navigate = useNavigate(); 
 
   // Função para buscar os insumos da API
   const fetchInsumos = async () => {
-    // Não reinicia o loading em cada atualização para uma experiência mais suave
-    // setLoading(true); 
+     
     try {
       const response = await fetch(`${import.meta.env.VITE_API_URL}/api/insumos`);
       if (!response.ok) { throw new Error('A resposta da rede não foi OK'); }
@@ -25,14 +23,14 @@ function AdminInsumosPage() {
     }
   };
 
-  // useEffect para buscar os insumos quando a página carregar
+  
   useEffect(() => {
     fetchInsumos();
   }, []);
 
-  // 2. NOVA FUNÇÃO: Para lidar com a exclusão de um insumo
+ 
   const handleDeleteInsumo = async (insumoId) => {
-    // Pede confirmação ao usuário antes de uma ação destrutiva
+    
     if (!window.confirm(`Tem certeza que deseja excluir o insumo ID ${insumoId}?`)) {
       return;
     }
@@ -46,9 +44,9 @@ function AdminInsumosPage() {
 
       if (response.ok) {
         alert(data.message);
-        fetchInsumos(); // Atualiza a lista de insumos na tela após a exclusão
+        fetchInsumos(); 
       } else {
-        // Mostra o erro específico que vem do back-end (ex: "insumo em uso")
+       
         throw new Error(data.message);
       }
     } catch (err) {

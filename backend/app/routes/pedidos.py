@@ -2,13 +2,10 @@ from flask import Blueprint, request, jsonify
 from app import get_db_connection
 import mysql.connector
 
-# Define o prefixo base para todas as rotas deste arquivo
-# Assim, as rotas serão: /api/pedidos/, /api/pedidos/1, /api/pedidos/meus-atendidos/1
+
 bp = Blueprint('pedidos', __name__, url_prefix='/api/pedidos')
 
-# ---------------------------------------------------------
-# ROTA 1: Listar todos os pedidos (usada pelo Gestor/Farmácia)
-# ---------------------------------------------------------
+
 @bp.route('/', methods=['GET'])
 def get_pedidos():
     try:
@@ -33,7 +30,7 @@ def get_pedidos():
         cursor.execute(sql, params)
         pedidos = cursor.fetchall()
         
-        # Formata datas para string antes de enviar
+        
         for pedido in pedidos:
             if pedido['Data_Hora_Solicitacao']:
                 pedido['Data_Hora_Solicitacao'] = pedido['Data_Hora_Solicitacao'].isoformat()
@@ -45,9 +42,7 @@ def get_pedidos():
         if 'cursor' in locals(): cursor.close()
         if 'conn' in locals(): conn.close()
 
-# ---------------------------------------------------------
-# ROTA 2: Detalhes de um pedido e Atualização de Status
-# ---------------------------------------------------------
+
 @bp.route('/<int:id_pedido>', methods=['GET', 'PATCH'])
 def handle_pedido_by_id(id_pedido):
     conn = get_db_connection()
@@ -102,17 +97,13 @@ def handle_pedido_by_id(id_pedido):
             cursor.close()
             conn.close()
 
-# ---------------------------------------------------------
-# ROTA 3: Meus Pedidos Atendidos (PARA O AVISO DO SOCORRISTA)
-# ---------------------------------------------------------
+
 @bp.route('/meus-atendidos/<int:id_usuario>', methods=['GET'])
 def get_meus_pedidos_atendidos(id_usuario):
     try:
         conn = get_db_connection()
         cursor = conn.cursor(dictionary=True)
-        
-        # Busca pedidos deste usuário que já foram 'Atendido'
-        # Ordena pelo mais recente e limita a 5 para não poluir a tela
+       
         sql = """
             SELECT p.ID_Pedido, p.Data_Hora_Solicitacao, a.Placa
             FROM Pedido_Reposicao p

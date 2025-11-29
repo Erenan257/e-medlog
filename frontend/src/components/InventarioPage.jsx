@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-// Reutilizaremos o estilo da página de pedidos para uma aparência consistente
+
 import './PedidosPage.css'; 
 
 function InventarioPage() {
@@ -7,11 +7,11 @@ function InventarioPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  // useEffect para buscar os insumos da nossa API quando a página carregar
+  
   useEffect(() => {
     const fetchInsumos = async () => {
       try {
-        // Reutilizamos a API que lista todos os insumos
+        
         const response = await fetch(`${import.meta.env.VITE_API_URL}/api/insumos`);
         if (!response.ok) {
           throw new Error('A resposta da rede não foi OK');
@@ -26,8 +26,7 @@ function InventarioPage() {
     };
 
     fetchInsumos();
-  }, []); // Array vazio para rodar apenas uma vez na montagem do componente
-
+  }, []); 
   if (loading) return <p className="loading-message">Carregando inventário padrão...</p>;
   if (error) return <p className="error-message">Erro ao carregar inventário: {error}</p>;
 

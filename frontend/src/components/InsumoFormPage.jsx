@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import './LoginPage.css'; // Reutilizando o estilo do formulário
+import './LoginPage.css'; 
 
 function InsumoFormPage() {
   const navigate = useNavigate();
@@ -21,7 +21,7 @@ function InsumoFormPage() {
     if (isEditMode) {
       const fetchInsumo = async () => {
         try {
-          // --- ALTERAÇÃO 1 AQUI ---
+          
           const response = await fetch(`${import.meta.env.VITE_API_URL}/api/insumos/${id_insumo}`);
           const data = await response.json();
           if (response.ok) {
@@ -55,15 +55,14 @@ function InsumoFormPage() {
   const handleSubmit = async (event) => {
     event.preventDefault();
 
-    // --- ALTERAÇÃO 2 AQUI ---
-    // A variável 'urlPath' agora guarda apenas o caminho
+    
     const urlPath = isEditMode 
       ? `/api/insumos/${id_insumo}` 
       : '/api/insumos';
     const method = isEditMode ? 'PUT' : 'POST';
 
     try {
-      // A URL completa é montada aqui, usando a variável de ambiente
+      
       const response = await fetch(`${import.meta.env.VITE_API_URL}${urlPath}`, {
         method: method,
         headers: { 'Content-Type': 'application/json' },

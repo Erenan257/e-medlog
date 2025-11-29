@@ -10,7 +10,7 @@ function AdminUsuariosPage() {
 
   const fetchUsuarios = async () => {
     try {
-      // --- ALTERAÇÃO 1 AQUI ---
+      
       const response = await fetch(`${import.meta.env.VITE_API_URL}/api/usuarios`);
       if (!response.ok) { throw new Error('A resposta da rede não foi OK'); }
       const data = await response.json();
@@ -29,7 +29,7 @@ function AdminUsuariosPage() {
   const handleToggleStatus = async (usuarioId, currentStatus) => {
     const isAtivando = !currentStatus;
     const method = isAtivando ? 'PATCH' : 'DELETE';
-    // --- ALTERAÇÃO 2 AQUI ---
+    
     const url = `${import.meta.env.VITE_API_URL}/api/usuarios/${usuarioId}`;
 
     if (!window.confirm(`Tem certeza que deseja ${isAtivando ? 'reativar' : 'inativar'} este usuário?`)) {

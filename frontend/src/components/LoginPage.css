@@ -3,12 +3,11 @@
   justify-content: center;
   align-items: center;
   height: 100vh;
-  background-color: var(--cor-fundo); /* Usa a variável */
-  font-family: sans-serif;
+  background-color: var(--cor-fundo); 
 }
 
 .login-form {
-  background: var(--cor-branco); /* Usa a variável */
+  background: var(--cor-branco); 
   padding: 40px;
   border-radius: 8px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
@@ -19,7 +18,7 @@
 
 .login-form h2 {
   margin-bottom: 24px;
-  color: var(--cor-texto-principal); /* Usa a variável */
+  color: var(--cor-texto-principal); 
 }
 
 .input-group {
@@ -30,14 +29,14 @@
 .input-group label {
   display: block;
   margin-bottom: 8px;
-  color: var(--cor-texto-secundario); /* Usa a variável */
+  color: var(--cor-texto-secundario); 
   font-weight: bold;
 }
 
 .input-group input {
   width: 100%;
   padding: 12px;
-  border: 1px solid var(--cor-borda); /* Usa a variável */
+  border: 1px solid var(--cor-borda); 
   border-radius: 6px;
   font-size: 16px;
 }
@@ -47,7 +46,7 @@ button[type="submit"] {
   padding: 12px;
   border: none;
   border-radius: 6px;
-  background-color: var(--cor-principal); /* Usa a variável */
+  background-color: var(--cor-principal); 
   color: var(--cor-branco);
   font-size: 18px;
   font-weight: bold;
@@ -56,13 +55,13 @@ button[type="submit"] {
 }
 
 button[type="submit"]:hover {
-  background-color: var(--cor-principal-hover); /* Usa a variável */
+  background-color: var(--cor-principal-hover); 
 }
 
 .forgot-password {
   display: block;
   margin-top: 16px;
-  color: var(--cor-principal); /* Usa a variável */
+  color: var(--cor-principal); 
   text-decoration: none;
   font-size: 14px;
 }
@@ -71,21 +70,21 @@ button[type="submit"]:hover {
   text-decoration: underline;
 }
 
-/* Estilo para a mensagem de feedback */
+
 .feedback-message {
   padding: 10px;
   margin-bottom: 1rem;
   border-radius: 5px;
   font-weight: bold;
   border: 1px solid transparent;
-  /* (Pode ser melhorado para ter cores de sucesso/erro) */
+  
 }
 
-/* --- AJUSTES RESPONSIVOS PARA FORMULÁRIOS --- */
+
 
 @media (max-width: 600px) {
   .login-form {
-    /* Em telas pequenas, removemos o padding excessivo e a sombra */
+    
     padding: 20px;
     box-shadow: none;
   }

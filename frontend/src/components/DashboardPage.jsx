@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './DashboardPage.css';
 
-// --- Ícones SVG Minimalistas ---
+
 const IconAlert = () => (<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>);
 const IconAmbulance = () => (<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="1" y="3" width="15" height="13"></rect><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"></polygon><circle cx="5.5" cy="18.5" r="2.5"></circle><circle cx="18.5" cy="18.5" r="2.5"></circle></svg>);
 const IconChecklist = () => (<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{marginRight: '8px'}}><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>);
@@ -16,19 +16,19 @@ function DashboardPage({ usuario }) {
   const [avisosPedidos, setAvisosPedidos] = useState([]);
 
   useEffect(() => {
-    // Proteção: Se usuario for null (logout), não faz nada
+    
     if (!usuario) return;
 
-    // 1. Lógica do GESTOR
+    
     if (usuario.Perfil === 'Gestor') {
       const fetchStats = async () => {
         try {
-          // Busca Pedidos
+         
           const resPed = await fetch(`${import.meta.env.VITE_API_URL}/api/pedidos/`);
           const dataPed = await resPed.json();
           const pendentes = dataPed.filter(p => p.Status_Pedido === 'Pendente').length;
 
-          // Busca Ambulâncias
+          
           const resAmb = await fetch(`${import.meta.env.VITE_API_URL}/api/ambulancias`);
           const dataAmb = await resAmb.json();
           const inaptas = dataAmb.filter(a => a.Status_Operacional === 'Inapto');
@@ -39,10 +39,10 @@ function DashboardPage({ usuario }) {
       fetchStats();
     } 
     
-    // 2. Lógica do SOCORRISTA
+    
     else if (usuario.Perfil === 'Socorrista') {
         
-        // Proteção contra ID indefinido
+       
         if (!usuario.ID_Usuario) {
             console.warn("Aviso: Usuário logado não tem ID_Usuario definido no objeto.", usuario);
             return;
@@ -50,14 +50,14 @@ function DashboardPage({ usuario }) {
 
         const fetchAvisos = async () => {
             try {
-                // URL montada com segurança
+                
                 const url = `${import.meta.env.VITE_API_URL}/api/pedidos/meus-atendidos/${usuario.ID_Usuario}`;
                 
                 const res = await fetch(url);
                 
                 if (res.ok) {
                     const data = await res.json();
-                    // Garante que data é um array antes de setar
+                   
                     if (Array.isArray(data)) {
                         setAvisosPedidos(data);
                     } else {

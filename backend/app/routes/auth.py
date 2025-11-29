@@ -1,10 +1,8 @@
-# backend/app/routes/auth.py
-
 from flask import Blueprint, request, jsonify
 from app import bcrypt, get_db_connection
 import mysql.connector
 
-# O prefixo /api será adicionado antes de /login e /registrar
+
 bp = Blueprint('auth', __name__, url_prefix='/api')
 
 @bp.route('/login', methods=['POST'])
@@ -80,23 +78,23 @@ def alterar_senha():
         conn = get_db_connection()
         cursor = conn.cursor(dictionary=True)
         
-        # 1. Busca a senha atual do banco para conferir
+        
         cursor.execute("SELECT Senha_Criptografada FROM Usuario WHERE ID_Usuario = %s", (id_usuario,))
         usuario = cursor.fetchone()
 
         if not usuario:
             return jsonify({"status": "erro", "message": "Usuário não encontrado"}), 404
 
-        # 2. Verifica se a senha atual bate
+        
         if not bcrypt.check_password_hash(usuario['Senha_Criptografada'], senha_atual):
             return jsonify({"status": "erro", "message": "Senha atual incorreta"}), 401
 
-        # 3. Criptografa a nova senha e atualiza
+       
         novo_hash = bcrypt.generate_password_hash(nova_senha).decode('utf-8')
         
-        cursor.close() # Fecha cursor de leitura
+        cursor.close()
         
-        cursor = conn.cursor() # Abre cursor de escrita
+        cursor = conn.cursor() 
         cursor.execute("UPDATE Usuario SET Senha_Criptografada = %s WHERE ID_Usuario = %s", (novo_hash, id_usuario))
         conn.commit()
         

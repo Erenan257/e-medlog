@@ -42,7 +42,7 @@ def handle_ambulancia_id(id_ambulancia):
     conn = get_db_connection()
     cursor = conn.cursor(dictionary=True)
 
-    # 1. ROTA GET (Buscar uma específica)
+    # 1. ROTA GET 
     if request.method == 'GET':
         try:
             cursor.execute("SELECT * FROM Ambulancia WHERE ID_Ambulancia = %s", (id_ambulancia,))
@@ -54,17 +54,17 @@ def handle_ambulancia_id(id_ambulancia):
             cursor.close()
             conn.close()
 
-    # 2. ROTA PUT (Atualizar / Baixar Viatura) - AQUI ESTAVA O ERRO
+    # 2. ROTA PUT 
     elif request.method == 'PUT':
         dados = request.get_json()
         try:
-            # Busca dados atuais para não apagar o que não foi enviado
+            
             cursor.execute("SELECT * FROM Ambulancia WHERE ID_Ambulancia = %s", (id_ambulancia,))
             atual = cursor.fetchone()
             if not atual:
                 return jsonify({"status": "erro", "message": "Ambulância não encontrada"}), 404
 
-            # Prepara os valores (mantém o antigo se não vier novo)
+            
             nova_placa = dados.get('placa', atual['Placa'])
             novo_tipo = dados.get('tipo', atual['Tipo_Ambulancia'])
             novo_status = dados.get('status', atual['Status_Operacional'])
@@ -84,7 +84,7 @@ def handle_ambulancia_id(id_ambulancia):
             cursor.close()
             conn.close()
 
-    # 3. ROTA DELETE (Excluir)
+    # 3. ROTA DELETE 
     elif request.method == 'DELETE':
         try:
             cursor.execute("DELETE FROM Ambulancia WHERE ID_Ambulancia = %s", (id_ambulancia,))
@@ -100,7 +100,7 @@ def handle_ambulancia_id(id_ambulancia):
             
 @bp.route('/ambulancias/<int:id_ambulancia>/itens', methods=['POST'])
 def salvar_inventario_padrao(id_ambulancia):
-    dados = request.get_json() # Espera uma lista: [{id_insumo: 1, qtd: 10}, ...]
+    dados = request.get_json() 
     
     if not dados or not isinstance(dados, list):
         return jsonify({"status": "erro", "message": "Formato inválido. Envie uma lista."}), 400
@@ -109,14 +109,13 @@ def salvar_inventario_padrao(id_ambulancia):
     cursor = conn.cursor()
 
     try:
-        # Estratégia: Limpar o kit anterior dessa viatura e salvar o novo
-        # Isso evita conflitos e facilita a edição
+        
         cursor.execute("DELETE FROM Inventario_Padrao WHERE ID_Ambulancia = %s", (id_ambulancia,))
         
         sql_insert = "INSERT INTO Inventario_Padrao (ID_Ambulancia, ID_Insumo, Quantidade_Padrao) VALUES (%s, %s, %s)"
         
         for item in dados:
-            # Só insere se quantidade > 0
+            
             if int(item['qtd']) > 0:
                 cursor.execute(sql_insert, (id_ambulancia, item['id_insumo'], item['qtd']))
         
@@ -130,13 +129,13 @@ def salvar_inventario_padrao(id_ambulancia):
         cursor.close()
         conn.close()
 
-# 2. Ler a configuração (Para o Checklist saber o que cobrar)
+
 @bp.route('/ambulancias/<int:id_ambulancia>/itens', methods=['GET'])
 def get_inventario_padrao(id_ambulancia):
     conn = get_db_connection()
     cursor = conn.cursor(dictionary=True)
     try:
-        # Traz os dados do Inventario_Padrao juntando com o nome do Insumo
+        
         sql = """
             SELECT i.ID_Insumo, i.Nome_Insumo, i.Unidade_Medida, i.Critico,
                    pad.Quantidade_Padrao as Quantidade_Minima
