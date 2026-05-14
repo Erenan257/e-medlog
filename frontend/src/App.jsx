@@ -212,7 +212,7 @@ function AppRoutes() {
         path="/admin/ambulancias" 
         element={
           <ProtectedRoute usuario={usuarioLogado} allowedRoles={['Gestor']}>
-            <Layout titulo="Gestão de Viaturas">
+            <Layout titulo="Gestão de Viaturas 1 ">
               <AdminAmbulanciasPage />
             </Layout>
           </ProtectedRoute>
