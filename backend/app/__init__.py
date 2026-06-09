@@ -1,4 +1,6 @@
 # backend/app/__init__.py
+import os
+from dotenv import load_dotenv
 from flask import Flask
 from flask_bcrypt import Bcrypt
 from flask_cors import CORS
@@ -10,10 +12,10 @@ cors = CORS(resources={r"/api/*": {"origins": "*"}})
 
 def get_db_connection():
     conn = mysql.connector.connect(
-        host="localhost",
-        user="root",
-        password="FAmilia36#",
-        database="emlog_db"
+        host=os.getenv("DB_HOST", "localhost"),
+        user=os.getenv("DB_USER"),
+        password=os.getenv("DB_PASSWORD"),
+        database=os.getenv("DB_NAME")
     )
     return conn
 
@@ -41,5 +43,14 @@ def create_app():
     @app.route('/health')
     def health_check():
         return "Servidor Flask está saudável!"
+    
+    @app.route('/')
+    def index():
+        return {
+            "nome_projeto": "Emedlog API",
+            "status": "Online",
+            "versao": "1.0",
+            "mensagem": "Bem-vindo ao Backend do Emedlog. Acesse as rotas /api/* para consumir os dados."
+            }
 
     return app

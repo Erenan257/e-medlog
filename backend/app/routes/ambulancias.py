@@ -13,6 +13,9 @@ def handle_ambulancias():
         try:
             cursor.execute("SELECT * FROM Ambulancia ORDER BY Placa ASC")
             ambulancias = cursor.fetchall()
+            for amb in ambulancias:
+                if 'Data_Cadastro' in amb and amb['Data_Cadastro']:
+                    amb['Data_Cadastro'] = str(amb['Data_Cadastro'])
             return jsonify(ambulancias)
         except Exception as e:
             return jsonify(message="Erro ao buscar ambulâncias", error=str(e)), 500
@@ -48,6 +51,8 @@ def handle_ambulancia_id(id_ambulancia):
             cursor.execute("SELECT * FROM Ambulancia WHERE ID_Ambulancia = %s", (id_ambulancia,))
             amb = cursor.fetchone()
             if amb:
+                if 'Data_Cadastro' in amb and amb['Data_Cadastro']:
+                    amb['Data_Cadastro'] = str(amb['Data_Cadastro'])
                 return jsonify(amb)
             return jsonify({"status": "erro", "message": "Ambulância não encontrada"}), 404
         finally:
