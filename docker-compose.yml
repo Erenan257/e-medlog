@@ -1,0 +1,69 @@
+version: '3.8'
+
+services:
+  # 1. O COFRE (Banco de Dados MySQL)
+  db:
+    image: mysql:8.0
+    container_name: emedlog-db
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: root_segura_123
+      MYSQL_DATABASE: emlog_db
+      MYSQL_USER: renan
+      MYSQL_PASSWORD: FAmilia36#
+    volumes:
+      - db_data:/var/lib/mysql
+      # O Docker vai ler o seu schema e criar as tabelas sozinho na primeira vez!
+      - ./schema.sql:/docker-entrypoint-initdb.d/schema.sql
+    networks:
+      - emedlog-net
+
+  # 2. O CÉREBRO (Backend Python/Flask)
+  backend:
+    build: ./backend
+    container_name: emedlog-backend
+    restart: always
+    environment:
+      # Repare que o HOST agora é o nome do container do banco!
+      - DB_HOST=db
+      - DB_USER=renan
+      - DB_PASSWORD=FAmilia36#
+      - DB_NAME=emlog_db
+    depends_on:
+      - db
+    networks:
+      - emedlog-net
+
+  # 3. A VITRINE (Frontend React + Nginx)
+  frontend:
+    build: ./frontend
+    container_name: emedlog-frontend
+    restart: always
+    ports:
+      - "80:80" # Expõe o site na porta padrão da internet
+    depends_on:
+      - backend
+    networks:
+      - emedlog-net
+
+  # 4. O TÚNEL (Cloudflare Zero Trust)
+  tunnel:
+    image: cloudflare/cloudflared:latest
+    container_name: emedlog-tunnel
+    restart: always
+    command: tunnel run
+    environment:
+      - TUNNEL_TOKEN=eyJhIjoiZWYwMTQxM2JhYTEzZWE3ZWUzYzgyZWU3YTRjODJmYjgiLCJ0IjoiMTJlMWI5NWQtNmU4Ni00OTNlLWJiYWQtZWU2ODIyMWNkODJkIiwicyI6Ik1tRTBOR1kzTmpRdFpEbGxOaTAwTWpVd0xUZ3lOMlF0WXpReFpURTJabU14T1daaCJ9
+    networks:
+      - emedlog-net
+    depends_on:
+      - frontend
+
+# Cria uma rede virtual isolada para eles conversarem com segurança
+networks:
+  emedlog-net:
+    driver: bridge
+
+# Um HD virtual para o MySQL não perder os dados se o container reiniciar
+volumes:
+  db_data:

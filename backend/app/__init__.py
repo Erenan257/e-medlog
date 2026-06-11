@@ -1,4 +1,5 @@
 
+import os
 from flask import Flask
 from flask_bcrypt import Bcrypt
 from flask_cors import CORS
@@ -10,8 +11,8 @@ cors = CORS(resources={r"/api/*": {"origins": "*"}})
 
 def get_db_connection():
     conn = mysql.connector.connect(
-        host="localhost",
-        user="root",
+        host=os.getenv("DB_HOST", "db"),
+        user="renan",
         password="FAmilia36#",
         database="emlog_db"
     )
