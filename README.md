@@ -91,8 +91,8 @@ Para rodar o projeto na sua máquina para desenvolvimento:
 
 ```bash
 # Clone o repositório
-git clone [https://github.com/Erenan257/tcc.git](https://github.com/Erenan257/tcc.git)
-cd tcc/backend
+git clone [https://github.com/Erenan257/e-medlog.git](https://github.com/Erenan257/e-medlog.git)
+cd e-medlog/backend
 
 # Crie e ative o ambiente virtual
 python -m venv venv
