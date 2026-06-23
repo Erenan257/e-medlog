@@ -18,6 +18,8 @@ O **E-MedLog** é um sistema desenvolvido para modernizar e otimizar o fluxo de 
 
 O projeto substitui o antigo método manual (baseado em formulários de papel) por uma solução digital eficiente que garante rastreabilidade e segurança. O sistema funciona como um **Progressive Web App (PWA)**, permitindo que socorristas realizem checklists e pedidos diretamente de dispositivos móveis, mesmo em trânsito.
 
+Desenvolvido a partir da observação direta da rotina de urgência médica, este sistema elimina a dependência de papéis e evita a falta de materiais críticos nas viaturas, otimizando o tempo dos socorristas e farmacêuticos.
+
 
 
 ## Tecnologias Utilizadas
